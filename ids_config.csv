@@ -1,0 +1,137 @@
+SCORE SCREEN,,Draft: https://canva.link/ippxncrqya9xrpe,,,,,,,,MOBILE APP,Draft: https://canva.link/lhmw4zvcescv98h,
+Page #,Slide,Stage Direction in Script,custom,id,Type,Visuals,Text ,Voting Results ,Result Type,Slide,Title,Text
+1,1,(A desolate space is illuminated by only the dim glow of a giant Score Screen that hangs in the background.,FALSE,black1,Image,Black,,,,1,Welcome,Welcome to Island Dating Show. Voting will begin shortly.
+,2,"It flickers, ",FALSE,glitch1,Video,Film glitch,,,,,,
+,3, then displays a hauntingly abrasive explosion of neon.),FALSE,pink1,Image,Pink background,Island Dating Show,,,,,
+3,4,"(The SCORE SCREEN illuminates, which reads “Pull out your phone & get ready to VOTE!” A QR code appears.)",FALSE,get-ready1,Image,Vote + QR code,Get out your phone & get ready to VOTE!,,,4,Get Ready,Get Ready To Vote!
+,5,"""TO THE BIRDS HERE ON THE ISLAND DATING SHOW""",FALSE,pinkbirds,Image,Pink background,The Birds,,,,,
+,6,"Top of ""1B: Island Dating Show""",FALSE,pinklads,Image,Pink background,The Lads,,,,,
+8,7,(SCORE SCREEN: First impressions last forever! Vote now for your favorite couple!,FALSE,vote-first-impression,Image,Vote + QR code,First impressions last forever! VOTE NOW for your favorite couple!,Results on Slide 11,,7,First Impression,"First impressions 
+last forever! 
+VOTE NOW for your favorite couple!"
+9,8,(SCORE SCREEN DING!) Message in a bottle! ... ,FALSE,message1,Image,Alert,Message in a bottle!,,,,,
+,9,Thaddeus!,FALSE,message-thaddeus,Image,Alert,Thaddeus!,,,,,
+,10,“The winning pair of the First Impression Vote is: ,FALSE,blue1,Image,Blue background,The winning pair of the First Impression Vote is...,,,,,
+,11,[Winning Couple’s Name]! (The SCORE SCREEN reflects live results from the first vote.),TRUE,results-first-impression-cc,Image,Live Vote results,First Impression Vote Winners! Charlotte & Callum,First Impression Results (couple),Only winning couple image,11,Thanks,Thanks for voting!
+,12,,FALSE,results-first-impression-ha,Image,,First Impression Vote Winners! Henrietta & Alfie,,,,,
+,13,,FALSE,results-first-impression-mt,Image,,First Impression Vote Winners! Marta & Thaddeus,,,,,
+,14,,FALSE,results-first-impression-pr,Image,,First Impression Vote Winners! Poppi & Rory,,,,,
+,15,Now let’s see how compatible you really are with the partner you met literally 30 seconds ago in today’s challenge...,FALSE,blue2,Image,Blue background,Now let’s see how compatible you really are with the partner you met literally 30 seconds ago in today’s challenge...,,,,,
+,16,Just My Type!,FALSE,challenge1,Image,Pink background,Challenge 1: Just My Type!,,,,,
+10,17,(SCORE SCREEN: Get out your phones & get ready to VOTE!),FALSE,get-ready2,Image,Vote + QR code,Get out your phone & get ready to VOTE! ,Results on Slide 22,,17,Get Ready,Get Ready To Vote!
+,18,(SCORE SCREEN: Henrietta & Alfie ~ 1) Each Other’s Type to a T! OR 2) Major Typo!),FALSE,type-ha,Image,Vote ,Henrietta & Alfie ~ 1) Each Other’s Type to a T! OR 2) Major Typo!),,,18,Henrietta & Alfie,Henrietta & Alfie
+11,19,(SCORE SCREEN: Poppi & Rory ~ 1) Each Other’s Type to a T! OR 2) Major Typo!),FALSE,type-pr,Image,Vote ,Poppi & Rory ~ 1) Each Other’s Type to a T! OR 2) Major Typo!,,,19,Poppi & Rory,Poppi & Rory
+,20,(SCORE SCREEN: Charlotte & Callum ~ 1) Each Other’s Type to a T! OR 2) Major Typo!),FALSE,type-cc,Image,Vote ,Charlotte & Callum ~ 1) Each Other’s Type to a T! OR 2) Major Typo!,,,20,Charlotte & Callum,Charlotte & Callum
+12,21,(SCORE SCREEN: Marta & Thaddeus ~ 1) Each Other’s Type to a T! OR 2) Major Typo!),FALSE,type-mt,Image,Vote ,Marta & Thaddeus ~ 1) Each Other’s Type to a T! OR 2) Major Typo!,,,21,Marta & Thad,Marta & Thad
+,22,(SCORE SCREEN: “Most Compatible: [Pair]!” They cheer.),TRUE,results-most-compatible,Image,Live Vote results,Most Compatible!,Most Compatible Results (couple),Complete ranking,22,Thanks,Thanks for voting!
+,23,(SCORE SCREEN: “Winner: Alfie!” MILLICENT exits.),FALSE,winner-alfie,Image,Pink background,Winner: Alfie!,,,,,
+,24,“Alfie!”--that’s me!--“Congratulations on winning the first challenge! Please head to the Love Nest…” (HENRIETTA squeals) “...to collect your prize…,FALSE,blue3,Image,Blue background,Congratulations on winning the first challenge! Please head to the Love Nest to collect your prize…,,,,,
+,25,A bombshell.,FALSE,blue4,Image,Blue background,Congratulations on winning the first challenge! Please head to the Love Nest to collect your prize… A bombshell.,,,,,
+13,26,(SCORE SCREEN plays [the loser’s] pre-recorded reaction in a confessional-style revelation.),TRUE,video-first-loser-cc,Video,Video - [Loser’s] pre-recorded reaction in confessional,LOSERS: Charlotte & Callum,Bottom couple from Slide 22 results,,,,
+,27,,FALSE,video-first-loser-ha,Video,,LOSERS: Henrietta & Alfie,,,,,
+,28,,FALSE,video-first-loser-mt,Video,,LOSERS: Marta & Thaddeus,,,,,
+,29,,FALSE,video-first-loser-pr,Video,,LOSERS: Poppi & Rory,,,,,
+14,30,Top of Scene 3,FALSE,love-nest1,Image,Love Nest background,,,,,,
+,31,"(The Score Screen blinks on and projects NAMELESS ONSCREEN WOMAN, who is a compilation of static images.",FALSE,nameless-buttons,Image,Nameless Onscreen Woman + buttons,,,,,,
+,32,,FALSE,nameless-buttons-speech,Image,Nameless Onscreen Woman + buttons + speech bubble,,,,,,
+15,33,"(The SCORE SCREEN updates, announcing her job: Model.)",FALSE,nameless-buttons-model,Image,Nameless Onscreen Woman + buttons + title,Model,,,,,
+,34,,FALSE,nameless-buttons-model-speech,Image,Nameless Onscreen Woman + title + speech bubble,,,,,,
+16,35,(He clicks a button. Her hips become gigantic.),FALSE,nameless-butt,Image,Nameless Onscreen Woman + mega butt mode,,,,,,
+,36,,FALSE,nameless-butt-speech,Image,Nameless Onscreen Woman + mega butt mode + speech bubble,,,,,,
+,37,,FALSE,nameless-nest,Image,Nameless Onscreen Woman,,,,,,
+,38,,FALSE,nameless-speech,Image,Nameless Onscreen Woman + speech bubble,,,,,,
+,39,(SCORE SCREEN: “VOTE NOW: Is she The Hottest or is she THE HOTTEST?!”,FALSE,vote-hottest,Image,Pink background,VOTE NOW: Is she The Hottest or is she THE HOTTEST?!,,,39,Hottest,Is she the hottest or THE HOTTEST
+17,40,Top of Scene 4,FALSE,stars1,Image,Stars,,,,,,
+19,41,“Message in a bottle! … ,FALSE,message2,Image,Alert,Message in a bottle!,,,40,Thanks,Thanks for voting!
+,42,Henrietta!”,FALSE,message-henrietta1,Image,Alert,Henrietta!,,,,,
+,43,"Henrietta — Alfie will remain in the Love Nest tonight. You are now alone and, therefore, ",FALSE,blue5,Image,Blue background,"Henrietta — Alfie will remain in the Love Nest tonight. You are now alone and, therefore, ",,,,,
+,44,UNSAFE.,FALSE,blue6,Image,Blue background,UNSAFE.,,,,,
+,45,"(SCORE SCREEN: “Which Island Dater is the loneliest, biggest flop??”)",FALSE,vote-loneliest,Image,Vote ,"VOTE NOW: Which Island Dater is the loneliest, biggest flop??",No results,,45,Loneliest Biggest Flop,"VOTE NOW: 
+Who is the loneliest, biggest FLOP??"
+20,46,(SCORE SCREEN plays Henrietta’s pre-recorded reaction in a confessional-style revelation.),FALSE,video-henrietta-lonely,Image,Video - Henrietta's pre-recorded reaction in confessional,,,,46,Thanks,Thanks for voting!
+21,47,Top of Scene 5,FALSE,gym1,Image,Gym,,,,,,
+24,48,Top of Scene 6,FALSE,makeup1,Image,Makeup room,,,,,,
+,49,(NAMELESS ONSCREEN WOMAN appears onscreen. ,FALSE,nameless-red1,Image,Nameless Onscreen Woman,,,,,,
+,50,,FALSE,nameless-red1-speech,Image,Nameless Onscreen Woman + speech bubble,,,,,,
+,51,NAMELESS ONSCREEN WOMAN vanishes as the screen goes dark. ,FALSE,black2,Image,Black,,,,,,
+28,52,"(A flashy commercial, à la Jet2 Holiday ad, airs on the Score Screen.)",FALSE,commercial1,Video,Video - Commercial I,,,,,,
+29,53,Top of Scene 7A,FALSE,pink2,Image,Pink background,,,,,,
+,54,(SCORE SCREEN DING!) “Message in a bottle! ,FALSE,message3,Image,Alert,Message in a bottle!,,,,,
+,55,… Marta!”,FALSE,message-marta1,Image,Alert,Marta!,,,,,
+,56,The Score Screen reflects this message: “CHALLENGE 2: Mono Poly!”,FALSE,challenge2,Image,Pink background,CHALLENGE 2: Mono Poly!,,,,,
+,57,(SCORE SCREEN DING!) “Message in a bottle! ,FALSE,message4,Image,Alert,Message in a bottle!,,,,,
+,58,… Henrietta!”,FALSE,message-henrietta2,Image,Alert,Henrietta!,,,,,
+,59,"“Henrietta, you are alone, and therefore unsafe, ",FALSE,blue7,Image,Blue background,"Henrietta, you are alone and, therefore, unsafe.",,,,,
+,60,so you’ll need to rotate among the couples…”,FALSE,blue8,Image,Blue background,so you’ll need to rotate among the couples…,,,,,
+30,61,"(The others dissolve, leaving HENRIETTA, ALFIE, and the image of NAMELESS ONSCREEN WOMAN.)",FALSE,nameless-red2,Image,Nameless Onscreen Woman,,,,,,
+,62,,FALSE,nameless-red2-speech,Image,Nameless Onscreen Woman + speech bubble,,,,,,
+,63,,FALSE,nameless-red3,Image,Nameless Onscreen Woman,,,,,,
+32,64,Top of Scene 7A,FALSE,pink3,Image,Pink background,,,,,,
+41,65,"(SCORE SCREEN: “VOTE NOW for the raftiest, craftiest Island Dater!”)",FALSE,vote-raftiest,Image,Vote + QR code,"VOTE NOW for the raftiest, craftiest Island Dater!",Results on Slide 66,,65,Raft,"VOTE NOW 
+for the Raftiest, Craftiest Island Dater!"
+43,66,(SCORE SCREEN announces [the winners] of Challenge 2. ,TRUE,results-challenge-two,Image,Live Vote results,Challenge 2 Winners,Challenge 2 Winners Results (couple),Complete ranking,,,
+,67,Score Screen plays their pre-recorded reaction in a confessional-style revelation.),TRUE,video-two-winner-aw,Video,Video - [Winners'] pre-recorded reaction in confessional,Challenge 2 Winners: Alfie & Woman,Top couple from Slide 66 results,,67,Thanks,Thanks for voting!
+,68,,FALSE,video-two-winner-cc,Video,,Challenge 2 Winners: Charlotte & Callum,,,,,
+,69,,FALSE,video-two-winner-mt,Video,,Challenge 2 Winners: Marta & Thaddeus,,,,,
+,70,,FALSE,video-two-winner-pr,Video,,Challenge 2 Winners: Poppi & Rory,,,,,
+45,71,Top of Scene 8,FALSE,pink4,Image,Pink background,,,,,,
+51,72,(SCORE SCREEN DING!) “Message In A Bottle! ,FALSE,message5,Image,Alert,Message in a bottle!,,,,,
+,73,… Rory!”,FALSE,message-rory,Image,Alert,Rory!,,,,,
+,74,“Now the Island Daters will play a salacious game of Truth or Dare—with a twist! ,FALSE,blue9,Image,Blue background,Now the Island Daters will play a salacious game of Truth or Dare—with a twist! ,,,,,
+,75,"In this version, they either Take A Shot & Tell The Truth, or Blow Kisses To Someone For At Least Sixty Seconds In Order To Get To Know Them Better.”",FALSE,blue10,Image,Blue background,"In this version, they either Take A Shot & Tell The Truth, or Blow Kisses To Someone For At Least Sixty Seconds In Order To Get To Know Them Better.",,,,,
+,76,"""TASATTT or BKTSFALSSIOTGTKTB?""",FALSE,pink-tasattt,Image,Pink background,TASATTT or BKTSFALSSIOTGTKTB?,,,,,
+,77,Truth or Dare,FALSE,nameless-red4,Image,Nameless,,,,,,
+53,78,“Message In A Bottle!”,FALSE,message6,Image,Alert,Message in a bottle!,,,,,
+,79,All!,FALSE,message-all1,Image,Alert,All!,,,,,
+,80,"""This Message is just telling you to pay attention to Millicent.”",FALSE,blue11,Image,Blue background,This Message is just telling you to pay attention to Millicent.,,,,,
+,81,"We're sorry, Millicent.",FALSE,pink5,Image,Pink background,,,,,,
+55,82,Intermission prompts,FALSE,vote-intermission,Image,Vote + QR code,TBA Intermission prompts,,,82,Intermission Prompts,"Intermission
+prompts (tba)
+
+Vote Now!"
+56,83,Top of Act 2 Scene 1,FALSE,confessional,Image,Confessional,,,,83,Thanks,Thanks for voting!
+58,84,(SCORE SCREEN: “VOTE NOW for your favorite Island Dater couple!”),FALSE,vote-favorite,Image,Vote + QR code,VOTE NOW for your favorite Island Dater!,Results on Slide 85-88,,85,Favorite,"VOTE NOW 
+for your FAVORITE Island Dater!"
+59,85,"(Rankings appear on the SCORE SCREEN, as voted on by the audience. NAMELESS ONSCREEN WOMAN will always be first. ALFIE will not place in the top three.",TRUE,results-third-place,Image,Live Vote result -- third place,3rd Place,Favorite Island Dater Couple Results: 3rd Place (individual),Only 3rd place couple image,,,
+,86,,TRUE,results-second-place,Image,Live Vote result -- second place,2nd Place,Favorite Island Dater Couple Results: 2nd Place (individual),Only 2nd place couple image,,,
+,87,,TRUE,results-rigged,Image,All Live Vote results + Nameless Onscreen Woman,1st Place,Favorite Island Dater Couple Results: all (individual),Complete ranking with Onscreen Woman in 1st place,,,
+60,88,"(Without a word, CALLUM’s ranking on the Score Screen drops.)",TRUE,results-edited,Image,All Live Vote results + Callum drops,,Favorite Island Dater Couple Results: all (individual),"Complete ranking with Onscreen Woman in 1st place, Callum at bottom",,,
+61,89,(A flashy commercial airs on the SCORE SCREEN.),FALSE,commercial2,Video,Video - Commercial II,,,,89,Thanks,Thanks for voting!
+62,90,Top of Scene 2,FALSE,gym2,Image,Gym,,,,,,
+64,91,“VOTE NOW”,FALSE,vote-glitch,Video,Vote ,VOTE NOW ??,,,,,
+,92,"(The Score Screen glitches, then uses ALFIE’s words: ",FALSE,glitch2,Video,Glitch,,,,,,
+,93,“VOTE NOW if you think Alfie deserves to get laid AND get his bag!”),FALSE,vote-alfie,Image,Vote + QR code,VOTE NOW if you think Alfie deserves to get laid AND get his bag!,N/A,,,,
+66,94,Top of Scene 3,FALSE,makeup2,Image,Makeup room,,,,,,
+67,95,(NAMELESS ONSCREEN WOMAN pops onscreen suddenly.),FALSE,nameless-red5,Image,Nameless Onscreen Woman,,,,,,
+,96,,FALSE,nameless-red5-speech,Image,Nameless Onscreen Woman + speech bubble,,,,,,
+,97,(HENRIETTA smashes the power button. NAMELESS ONSCREEN WOMAN disappears.),FALSE,black3,Image,Black,,,,,,
+70,98,(SCORE SCREEN pops back on with a DING!),FALSE,message7,Image,Alert,Message in a bottle!,,,,,
+,99,All!,FALSE,message-all2,Image,Alert,All!,,,,,
+,100,"""Noooo!""",FALSE,makeup3,Image,Makeup room,,,,,,
+71,101,"(SCORE SCREEN: “The clock is ticking, Island Daters! Secure your couple or risk being ALONE AND THEREFORE UNSAFE!”)",FALSE,secure-couples,Image,Message,"The clock is ticking, Island Daters! Secure your couple or risk being ALONE AND THEREFORE UNSAFE!",,,,,
+72,102,Top of Scene 4,FALSE,pink6,Image,Pink background,,,,,,
+75,103,(SCORE SCREEN: “VOTE NOW: Are Charlotte and Callum 1) Sweetie Pie or 2) BORING OLD YAWN TOMATO TOMATO TOMATO?”),FALSE,vote-cc,Image,Vote + QR code,VOTE NOW: Are Charlotte and Callum 1) Sweetie Pie or 2) BORING OLD YAWN TOMATO TOMATO TOMATO?,Results go toward Slide 120,,103,Charlotte & Callum,"VOTE NOW: 
+are Charlotte & Callum"
+75A,104,(A flashy commercial airs on the SCORE SCREEN.),FALSE,commercial3,Video,Video - Commercial III,,,,,,
+,105,Top of Scene 6,FALSE,love-nest2,Image,Love Nest background,,,,105,Thanks,Thanks for voting!
+80,106,(NAMELESS ONSCREEN WOMAN appears ,FALSE,love-nest2-nameless1,Image,Nameless Onscreen Woman,,,,,,
+,107,,FALSE,love-nest2-nameless-speech,Image,Nameless Onscreen Woman + speech bubble,,,,,,
+,108,,FALSE,love-nest2-nameless2,Image,Nameless Onscreen Woman,,,,,,
+,109,... slowly shifting into an image of MILLICENT by the end of the song.),FALSE,nameless-millicent,Image,Nameless Onscreen Woman + Millicent face,,,,,,
+82,110,"The SCORE SCREEN shifts suddenly, reflecting a 10 minute countdown until ‘Winner is Revealed’.",TRUE,video-timer,Video,Timer,10 Minute Countdown Until Winner is Revealed!,,,,,
+83,111,Top of Scene 7,FALSE,stars2,Image,Stars,,,,,,
+84,112,Last rites,FALSE,catholic-confessional,Image,Confessional (Religious),,,,,,
+,113,"(POPPI, THADDEUS, HENRIETTA, and RORY rush back to the kitchen island, intersecting with CHARLOTTE and CALLUM.)",FALSE,stars3,Image,Stars,,,,,,
+86,114,The SCORE SCREEN suddenly glitches.,FALSE,glitch-loop,Video,Glitch (LOOP),,,Loop ****,,,
+88,115,"(Suddenly, there is a huge explosion.)",FALSE,explosion,Video,Explosion,,,,,,
+,116,Top of Scene 8,FALSE,black4,Image,Black,,,,,,
+91,117,Top of Scene 9,FALSE,pink7,Image,Pink background,,,,,,
+92,118,(The Island Daters gather around the kitchen island.),FALSE,vote-favorite2,Image,Vote + QR code,VOTE NOW for your favorite Island Dater couple!,Results go toward Slide 120,,118,Final Vote, VOTE NOW  for your FAVORITE Island Dater Couple!
+93,119,(SCORE SCREEN: “Votes are in! Announcing our winner!”),FALSE,vote-winners,Image,Vote,Votes are in! Announcing our winners!,,,,,
+,120,,TRUE,results-winners-cc,Image,Live Vote results,Congratulations to our Winners! Charlotte & Callum,Winners,Only winning couple image,120,End,"Thanks for voting!
+See you next time!"
+,121,,FALSE,results-winners-hr,Image,,Congratulations to our Winners! Henrietta & Rory,Winners,,,,
+,122,,FALSE,results-winners-md,Image,,Congratulations to our Winners! Marta & Sir David,Winners,,,,
+,123,,FALSE,results-winners-pr,Image,,Congratulations to our Winners! Poppi & Thaddeus,Winners,,,,
+,124,"Top of ""Next To You""",FALSE,pink8,Image,Pink background,,,,,,
+,125,Curtain Call,FALSE,title-final,Image,Title Card,,,,,,
