@@ -21,8 +21,7 @@ from pathlib import Path
 
 # Project root is the parent of this script's directory.
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUT = ROOT / "static" / "slides"
-DEFAULT_CONFIG = ROOT / "input" / "ids_config.csv"
+DEFAULT_OUT = ROOT / "input" / "slides"
 
 # Fixed slide dimensions (16:9). Every page is rendered to exactly this size.
 WIDTH = 1440

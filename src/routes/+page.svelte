@@ -1,25 +1,20 @@
 <script>
 	import { onMount } from 'svelte';
+	import manifest from '$lib/assets/slides/manifest.json';
 
 	let slides = $state([]); // [{ src, w, h }]
 	let current = $state(0); // 0 = welcome slide, 1..n = PDF pages
 	let loadError = $state('');
 
+	const images = import.meta.glob('$lib/assets/slides/*.webp', { 
+    eager: false, 
+    as: 'url' // Resolves the assets to their final built string URLs
+  });
+  const imageList = Object.values(images);
+
+
 	// Total = welcome slide + PDF pages.
 	let total = $derived(slides.length + 1);
-
-	onMount(async () => {
-		try {
-			const res = await fetch('slides/manifest.json');
-			if (!res.ok) throw new Error(`manifest ${res.status}`);
-			const data = await res.json();
-			slides = data.slides ?? [];
-		} catch (e) {
-			// No manifest yet — run the conversion script first.
-			loadError =
-				'No slides found. Generate them with:  python3 scripts/pdf_to_slides.py path/to/deck.pdf';
-		}
-	});
 
 	function next() {
 		if (current < total - 1) current += 1;
