@@ -1,20 +1,30 @@
 <script>
-	import { onMount } from 'svelte';
 	import manifest from '$lib/assets/slides/manifest.json';
 
-	let slides = $state([]); // [{ src, w, h }]
+	// Eagerly resolve every slide image to its final built URL, keyed by module path.
+	const urls = import.meta.glob('$lib/assets/slides/*.webp', {
+		eager: true,
+		query: '?url',
+		import: 'default'
+	});
+
+	// Index the resolved URLs by filename so we can look them up from the manifest.
+	const urlByName = {};
+	for (const [path, url] of Object.entries(urls)) {
+		urlByName[path.split('/').pop()] = url;
+	}
+
+	// Build the ordered slide list from the manifest, swapping each relative
+	// `src` for its resolved URL. Drop any entry whose image is missing.
+	const slides = manifest.slides
+		.map((s) => ({ ...s, src: urlByName[s.src.split('/').pop()] }))
+		.filter((s) => s.src); // [{ src, w, h, id }]
+
 	let current = $state(0); // 0 = welcome slide, 1..n = PDF pages
-	let loadError = $state('');
-
-	const images = import.meta.glob('$lib/assets/slides/*.webp', { 
-    eager: false, 
-    as: 'url' // Resolves the assets to their final built string URLs
-  });
-  const imageList = Object.values(images);
-
+	let loadError = $state(slides.length ? '' : 'No slides found.');
 
 	// Total = welcome slide + PDF pages.
-	let total = $derived(slides.length + 1);
+	let total = slides.length + 1;
 
 	function next() {
 		if (current < total - 1) current += 1;

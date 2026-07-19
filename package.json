@@ -25,5 +25,8 @@
 		"prettier-plugin-svelte": "^4.1.0",
 		"svelte": "^5.56.1",
 		"vite": "^8.0.16"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.1.0"
 	}
 }
