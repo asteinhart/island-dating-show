@@ -21,7 +21,7 @@ from pathlib import Path
 
 # Project root is the parent of this script's directory.
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUT = ROOT / "input" / "slides"
+DEFAULT_OUT = ROOT / "output" / "slides"
 
 # Fixed slide dimensions (16:9). Every page is rendered to exactly this size.
 WIDTH = 1440
@@ -89,7 +89,8 @@ def identify_size(magick: str, img: Path) -> tuple[int, int]:
     """Return (width, height) in pixels for an image."""
     out = subprocess.run(
         [magick, "identify", "-format", "%w %h", str(img)],
-        capture_output=True, text=True,
+        capture_output=True,
+        text=True,
     )
     if out.returncode != 0:
         # ImageMagick 6 exposes `identify` as its own binary.
@@ -97,7 +98,8 @@ def identify_size(magick: str, img: Path) -> tuple[int, int]:
         if alt:
             out = subprocess.run(
                 [alt, "-format", "%w %h", str(img)],
-                capture_output=True, text=True,
+                capture_output=True,
+                text=True,
             )
     w, h = out.stdout.strip().split()
     return int(w), int(h)
@@ -106,10 +108,18 @@ def identify_size(magick: str, img: Path) -> tuple[int, int]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Convert a PDF into slideshow images.")
     parser.add_argument("pdf", type=Path, help="Path to the source PDF")
-    parser.add_argument("--out", type=Path, default=DEFAULT_OUT,
-                        help=f"Output directory (default: {DEFAULT_OUT})")
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG,
-                        help=f"CSV mapping slide numbers to ids (default: {DEFAULT_CONFIG})")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=DEFAULT_OUT,
+        help=f"Output directory (default: {DEFAULT_OUT})",
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=DEFAULT_CONFIG,
+        help=f"CSV mapping slide numbers to ids (default: {DEFAULT_CONFIG})",
+    )
     args = parser.parse_args()
 
     pdf = args.pdf.expanduser().resolve()
@@ -135,15 +145,22 @@ def main() -> None:
         tmp_dir = Path(tmp)
         prefix = tmp_dir / "page"
         # pdftocairo renders crisp PNGs, forced to the fixed 16:9 dimensions.
-        run([
-            pdftocairo, "-png",
-            "-scale-to-x", str(WIDTH),
-            "-scale-to-y", str(HEIGHT),
-            str(pdf), str(prefix),
-        ])
+        run(
+            [
+                pdftocairo,
+                "-png",
+                "-scale-to-x",
+                str(WIDTH),
+                "-scale-to-y",
+                str(HEIGHT),
+                str(pdf),
+                str(prefix),
+            ]
+        )
 
-        pages = sorted(tmp_dir.glob("page-*.png"),
-                       key=lambda p: int(p.stem.split("-")[-1]))
+        pages = sorted(
+            tmp_dir.glob("page-*.png"), key=lambda p: int(p.stem.split("-")[-1])
+        )
         if not pages:
             sys.exit("error: pdftocairo produced no pages.")
 
@@ -158,17 +175,25 @@ def main() -> None:
             entry = {"src": f"slides/{name}", "w": w, "h": h, "id": ids.get(i)}
             manifest.append(entry)
             id_note = f"  #{entry['id']}" if entry["id"] else ""
-            print(f"  slide {i:>3}/{len(pages)}  {name}  {w}x{h}  {size_kb:.0f} KB{id_note}")
+            print(
+                f"  slide {i:>3}/{len(pages)}  {name}  {w}x{h}  {size_kb:.0f} KB{id_note}"
+            )
 
     manifest_path = out_dir / "manifest.json"
-    manifest_path.write_text(json.dumps({
-        "source": pdf.name,
-        "count": len(manifest),
-        "slides": manifest,
-    }, indent=2))
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "source": pdf.name,
+                "count": len(manifest),
+                "slides": manifest,
+            },
+            indent=2,
+        )
+    )
 
-    total_mb = sum((out_dir / Path(s["src"]).name).stat().st_size
-                   for s in manifest) / (1024 * 1024)
+    total_mb = sum((out_dir / Path(s["src"]).name).stat().st_size for s in manifest) / (
+        1024 * 1024
+    )
     print(f"\nDone: {len(manifest)} slides, {total_mb:.1f} MB total -> {out_dir}")
     print(f"Manifest: {manifest_path}")
 
