@@ -1,6 +1,16 @@
 <script>
 	import manifest from '$lib/assets/slides/manifest.json';
 	import { sceneIdForSlideId } from '$lib/voterScenes';
+	import {
+		getSlideConfig,
+		resultsGroupByPrimary,
+		isCollapsedGroupMember,
+		videoSlides
+	} from '$lib/slideConfig';
+	import Video from '$lib/Video.svelte';
+	import VotePlaceholder from '$lib/VotePlaceholder.svelte';
+	import ResultsPlaceholder from '$lib/ResultsPlaceholder.svelte';
+	import Results from '$lib/Results.svelte';
 
 	// Eagerly resolve every slide image to its final built URL, keyed by module path.
 	const urls = import.meta.glob('$lib/assets/slides/*.webp', {
@@ -17,15 +27,32 @@
 
 	// Build the ordered slide list from the manifest, swapping each relative
 	// `src` for its resolved URL. Drop any entry whose image is missing.
-	const slides = manifest.slides
+	const allSlides = manifest.slides
 		.map((s) => ({ ...s, src: urlByName[s.src.split('/').pop()] }))
 		.filter((s) => s.src); // [{ src, w, h, id }]
+
+	// id -> resolved image URL, so <Results> can reveal any winner's pre-made slide.
+	const srcById = Object.fromEntries(allSlides.map((s) => [s.id, s.src]));
+
+	// id -> video src, so a video reveal group can play any outcome's clip. Built
+	// from the config (not the manifest) since videos live in static/, not the deck.
+	const videoSrcById = Object.fromEntries(videoSlides.map((v) => [v.id, v.src]));
+
+	// Collapse winner-reveal groups: keep only each group's primary slide in the
+	// deck; its <Results> component reveals the right member image from the vote.
+	const slides = allSlides.filter((s) => !isCollapsedGroupMember(s.id));
 
 	let current = $state(0); // 0 = welcome slide, 1..n = PDF pages
 	let loadError = $state(slides.length ? '' : 'No slides found.');
 
 	// Total = welcome slide + PDF pages.
 	let total = slides.length + 1;
+
+	// The current PDF slide (null on the welcome screen) and its config role.
+	let slide = $derived(current === 0 ? null : (slides[current - 1] ?? null));
+	let cfg = $derived(slide ? getSlideConfig(slide.id) : null);
+	// If this slide is a winner-reveal group's primary, drive it live with <Results>.
+	let group = $derived(slide ? resultsGroupByPrimary(slide.id) : null);
 
 	function next() {
 		if (current < total - 1) current += 1;
@@ -119,8 +146,45 @@
 					<p class="hint">{loadError}</p>
 				{/if}
 			</div>
+		{:else if group}
+			<!-- Outcome reveal: poll the vote, then reveal the chosen couple's pre-made
+			     image, or play their pre-made clip and advance when it ends. Checked
+			     before cfg.video so a video group's primary reveals live instead of
+			     playing its own single take. -->
+			{#key slide.id}
+				{#if group.kind === 'video'}
+					<Results
+						voteId={group.voteId}
+						choiceToId={group.choiceToId}
+						srcById={videoSrcById}
+						kind="video"
+						select={group.select ?? 'winner'}
+						fallback={group.fallback ?? null}
+						onended={next}
+					/>
+				{:else}
+					<Results
+						voteId={group.voteId}
+						choiceToId={group.choiceToId}
+						{srcById}
+						select={group.select ?? 'winner'}
+					/>
+				{/if}
+			{/key}
+		{:else if cfg?.video}
+			<!-- Video slide: autoplay, advance to the next slide when it ends. -->
+			{#key slide.id}
+				<Video src={cfg.video.src} loop={cfg.video.loop} onended={next} />
+			{/key}
+		{:else if cfg?.vote}
+			<VotePlaceholder
+				type={cfg.vote.type}
+				characters={cfg.vote.characters}
+				options={cfg.vote.options ?? []}
+			/>
+		{:else if cfg?.results}
+			<ResultsPlaceholder type={cfg.results.type} characters={cfg.results.characters ?? []} />
 		{:else}
-			{@const slide = slides[current - 1]}
 			<img
 				id={slide.id}
 				class="slide-img"

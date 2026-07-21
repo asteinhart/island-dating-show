@@ -1,4 +1,7 @@
 *.pdf
+/input/*
+/output/*
+
 */__pycache__/
 
 
