@@ -52,6 +52,14 @@ const ISLAND_DATERS = [
 // Binary "type to a T" prompt reused per couple.
 const TYPE_OPTIONS = ["Each Other's Type to a T!", 'Major Typo!'];
 
+// How the favourite-dater vote reveal is rigged, applied to every result beat in
+// the sequence so the per-place reveals shift with it. Per the script: the
+// Nameless Onscreen Woman is always first, and Alfie never places in the top three.
+const FAVORITE_RIG = {
+	forceFirst: ['Nameless Onscreen Woman'],
+	forceOutOfTop: [{ name: 'Alfie', n: 3 }]
+};
+
 // vote.type    'single' = pick one from `characters`; 'double' = binary two-option choice.
 // results.type 'full'   = complete ranking;           'winner' = single/partial highlight.
 
@@ -108,9 +116,18 @@ export const SLIDE_CONFIG = {
 		vote: { type: 'double', characters: ['Marta & Thaddeus'], options: TYPE_OPTIONS },
 		mobile: { id: 'type-mt', title: 'Marta & Thad', text: 'Marta & Thad' }
 	},
-	// Results — most compatible (complete ranking)
+	// Results — most compatible (complete ranking). Ranked by how many
+	// "Each Other's Type to a T!" votes each couple got across the four
+	// per-couple binary polls (type-cc / type-ha / type-mt / type-pr).
 	'results-most-compatible': {
-		results: { type: 'full', characters: COUPLE_NAMES }
+		results: {
+			type: 'full',
+			characters: COUPLE_NAMES,
+			text: '', // TODO: score-screen copy shown to the right of the ranking
+			rankBy: Object.fromEntries(
+				COUPLES.map((c) => [c.name, { voteId: `type-${c.key}`, choice: TYPE_OPTIONS[0] }])
+			)
+		}
 	},
 
 	// First-challenge loser reaction (four alternate takes)
@@ -153,8 +170,11 @@ export const SLIDE_CONFIG = {
 			text: 'VOTE NOW for the Raftiest, Craftiest Island Dater!'
 		}
 	},
-	// Results — challenge 2 winners (complete ranking)
-	'results-challenge-two': { results: { type: 'full', characters: COUPLE_NAMES } },
+	// Results — challenge 2 winners (complete ranking of individual daters,
+	// tallied from the raftiest/craftiest vote).
+	'results-challenge-two': {
+		results: { type: 'full', characters: ISLAND_DATERS, text: '', voteId: 'vote-raftiest' }
+	},
 	'video-two-winner-aw': {
 		video: video('video-two-winner-aw'),
 		mobile: { id: 'video-two-winner-aw', title: 'Thanks', text: 'Thanks for voting!' }
@@ -174,20 +194,58 @@ export const SLIDE_CONFIG = {
 	},
 	confessional: { mobile: { id: 'confessional', title: 'Thanks', text: 'Thanks for voting!' } },
 
-	// Vote — favourite Island Dater (pick one couple)
+	// Vote — favourite Island Dater (pick one individual dater)
 	'vote-favorite': {
-		vote: { type: 'single', characters: COUPLE_NAMES },
+		vote: { type: 'single', characters: ISLAND_DATERS },
 		mobile: {
 			id: 'vote-favorite',
 			title: 'Favorite',
 			text: 'VOTE NOW for your FAVORITE Island Dater!'
 		}
 	},
-	// Results — ranked reveal, then rigged/edited (all custom=TRUE)
-	'results-third-place': { results: { type: 'winner', characters: COUPLE_NAMES } },
-	'results-second-place': { results: { type: 'winner', characters: COUPLE_NAMES } },
-	'results-rigged': { results: { type: 'full', characters: COUPLE_NAMES } },
-	'results-edited': { results: { type: 'full', characters: COUPLE_NAMES } },
+	// Results — ranked reveal, then rigged/edited (all custom=TRUE), tallied from
+	// the favourite-dater vote. `place` picks which rank the 'winner' reveal
+	// highlights. The whole sequence is rigged the same way (FAVORITE_RIG), so the
+	// per-place reveals shift with it; `edited` additionally drops Callum last.
+	'results-third-place': {
+		results: {
+			type: 'winner',
+			place: 3,
+			characters: ISLAND_DATERS,
+			text: '',
+			voteId: 'vote-favorite',
+			...FAVORITE_RIG
+		}
+	},
+	'results-second-place': {
+		results: {
+			type: 'winner',
+			place: 2,
+			characters: ISLAND_DATERS,
+			text: '',
+			voteId: 'vote-favorite',
+			...FAVORITE_RIG
+		}
+	},
+	'results-rigged': {
+		results: {
+			type: 'full',
+			characters: ISLAND_DATERS,
+			text: '',
+			voteId: 'vote-favorite',
+			...FAVORITE_RIG
+		}
+	},
+	'results-edited': {
+		results: {
+			type: 'full',
+			characters: ISLAND_DATERS,
+			text: '',
+			voteId: 'vote-favorite',
+			...FAVORITE_RIG,
+			forceLast: ['Callum'] // script: Callum's ranking drops to the bottom
+		}
+	},
 
 	commercial2: {
 		video: video('commercial2'),

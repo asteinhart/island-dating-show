@@ -177,7 +177,10 @@
 				<Video src={cfg.video.src} loop={cfg.video.loop} onended={next} />
 			{/key}
 		{:else if cfg?.results}
-			<ResultsPlaceholder type={cfg.results.type} characters={cfg.results.characters ?? []} />
+			<!-- Live ranking: poll the vote tally and rank the entries. -->
+			{#key slide.id}
+				<ResultsPlaceholder {...cfg.results} />
+			{/key}
 		{:else}
 			<img
 				id={slide.id}
