@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-Convert MP4 videos to web-optimized WebM (VP9 + Opus) for the slideshow.
+Convert MP4/MOV videos to web-optimized WebM (VP9 + Opus) for the slideshow.
 
 Uses the ffmpeg binary via subprocess, so there are no pip dependencies.
 Encodes with constant-quality VP9 (-crf, -b:v 0), which is the recommended
-mode for web delivery. Accepts a single .mp4 or a directory of them.
+mode for web delivery. Accepts a single .mp4/.mov file or a directory of them.
 
 Usage:
     python3 scripts/mp4_to_webm.py path/to/video.mp4
+    python3 scripts/mp4_to_webm.py path/to/video.mov
     python3 scripts/mp4_to_webm.py input/videos            # convert a folder
     python3 scripts/mp4_to_webm.py input/videos --crf 33 --width 1440 --no-audio
 """
@@ -26,6 +27,7 @@ DEFAULT_OUT = ROOT / "output" / "videos"
 # VP9 constant-quality default. Lower crf = higher quality/bigger file.
 # 30-34 is a good range for web; 32 is a reasonable middle ground.
 QUALITY = 32
+SUPPORTED_INPUT_EXTENSIONS = {".mp4", ".mov"}
 
 
 def require(tool: str) -> str:
@@ -45,31 +47,33 @@ def run(cmd: list[str]) -> None:
 
 
 def gather(src: Path) -> list[Path]:
-    """Return the list of .mp4 files to convert from a file or directory."""
+    """Return the list of supported video files to convert from a file or directory."""
     if src.is_file():
-        if src.suffix.lower() != ".mp4":
-            sys.exit(f"error: {src.name} is not an .mp4 file")
+        if src.suffix.lower() not in SUPPORTED_INPUT_EXTENSIONS:
+            sys.exit(f"error: {src.name} is not a supported video file")
         return [src]
     if src.is_dir():
         mp4s = sorted(
-            p for p in src.iterdir() if p.is_file() and p.suffix.lower() == ".mp4"
+            p
+            for p in src.iterdir()
+            if p.is_file() and p.suffix.lower() in SUPPORTED_INPUT_EXTENSIONS
         )
         if not mp4s:
-            sys.exit(f"error: no .mp4 files found in {src}")
+            sys.exit(f"error: no supported video files found in {src}")
         return mp4s
     sys.exit(f"error: no such file or directory: {src}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Convert MP4 videos to WebM (VP9 + Opus)."
+        description="Convert MP4/MOV videos to WebM (VP9 + Opus)."
     )
     parser.add_argument(
         "src",
         type=Path,
         default=DEFAULT_IN,
         nargs="?",
-        help=f"Source .mp4 file or directory (default: {DEFAULT_IN})",
+        help=f"Source .mp4/.mov file or directory (default: {DEFAULT_IN})",
     )
     parser.add_argument(
         "--out",
