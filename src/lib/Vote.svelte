@@ -71,21 +71,18 @@
 
 <div class="vote">
 	{#each options as option (option)}
-		{@const count = tally[option] ?? 0}
-		{@const pct = total ? Math.round((count / total) * 100) : 0}
 		<button
 			class="option"
 			class:selected={choice === option}
 			disabled={busy || voted}
 			onclick={() => vote(option)}
 		>
-			{#if showResults}<span class="bar" style="width:{pct}%"></span>{/if}
+			{#if showResults}<span class="bar" style="width:100%"></span>{/if}
 			<span class="label">{option}</span>
-			{#if showResults}<span class="count">{count} · {pct}%</span>{/if}
 		</button>
 	{/each}
 
-	{#if voted}<p class="voted">Thanks — you've already voted.</p>{/if}
+	{#if voted}<p class="voted">Thanks for voting.</p>{/if}
 	{#if showResults}<p class="total">{total} vote{total === 1 ? '' : 's'}</p>{/if}
 	{#if err}<p class="err">{err}</p>{/if}
 </div>
@@ -129,15 +126,6 @@
 		transition: width 0.3s ease;
 	}
 	.label,
-	.count {
-		position: relative;
-		z-index: 1;
-	}
-	.count {
-		font-variant-numeric: tabular-nums;
-		opacity: 0.7;
-		font-size: 0.85rem;
-	}
 	.total {
 		margin: 0.25rem 0 0;
 		font-size: 0.85rem;
@@ -147,7 +135,6 @@
 		margin: 0.25rem 0 0;
 		font-size: 0.85rem;
 		font-weight: 600;
-		color: #111;
 	}
 	.err {
 		color: #c00;

@@ -26,7 +26,7 @@
 // --- shared vocab -----------------------------------------------------------
 
 // Where video files live once added (static/videos/<id>.webm -> /videos/<id>.webm).
-export const VIDEO_BASE = '/videos';
+export const VIDEO_BASE = 'https://island-dating-show.s3.us-east-2.amazonaws.com/videos';
 const video = (id, { loop = false } = {}) => ({ src: `${VIDEO_BASE}/${id}.webm`, loop });
 
 // The four original couples. `key` is the short code used in slide ids.
@@ -61,6 +61,13 @@ export const SLIDE_CONFIG = {
 	// Opening
 	black1: {
 		mobile: {
+			id: 'first',
+			title: 'Welcome',
+			text: 'Welcome to Island Dating Show. Voting will begin shortly.'
+		}
+	},
+	black1: {
+		mobile: {
 			id: 'black1',
 			title: 'Welcome',
 			text: 'Welcome to Island Dating Show. Voting will begin shortly.'
@@ -75,13 +82,12 @@ export const SLIDE_CONFIG = {
 		mobile: {
 			id: 'vote-first-impression',
 			title: 'First Impression',
-			text: 'First impressions last forever! VOTE NOW for your favorite couple!'
+			text: 'First impressions last forever! <br/> <br/> VOTE NOW for your favorite couple!'
 		}
 	},
 	// Results 1 — winning couple (only the custom=TRUE variant renders live)
 	'results-first-impression-cc': {
-		results: { type: 'winner', characters: COUPLE_NAMES },
-		mobile: { id: 'results-first-impression-cc', title: 'Thanks', text: 'Thanks for voting!' }
+		results: { type: 'winner', characters: COUPLE_NAMES }
 	},
 
 	// Challenge 1 — per-couple binary "type to a T"
@@ -104,8 +110,7 @@ export const SLIDE_CONFIG = {
 	},
 	// Results — most compatible (complete ranking)
 	'results-most-compatible': {
-		results: { type: 'full', characters: COUPLE_NAMES },
-		mobile: { id: 'results-most-compatible', title: 'Thanks', text: 'Thanks for voting!' }
+		results: { type: 'full', characters: COUPLE_NAMES }
 	},
 
 	// First-challenge loser reaction (four alternate takes)
@@ -117,11 +122,7 @@ export const SLIDE_CONFIG = {
 	// Vote — hottest (binary)
 	'nameless-buttons': {},
 	'vote-hottest': {
-		vote: {
-			type: 'double',
-			characters: ['Nameless Onscreen Woman'],
-			options: ['The Hottest', 'THE HOTTEST']
-		},
+		vote: { type: 'double', characters: ISLAND_DATERS, options: ['Yes', 'No'] },
 		mobile: { id: 'vote-hottest', title: 'Hottest', text: 'Is she the hottest or THE HOTTEST' }
 	},
 
@@ -164,7 +165,7 @@ export const SLIDE_CONFIG = {
 
 	// Intermission
 	'vote-intermission': {
-		vote: { type: 'single', characters: [] }, // prompts TBA
+		vote: { type: 'single', characters: ISLAND_DATERS },
 		mobile: {
 			id: 'vote-intermission',
 			title: 'Intermission Prompts',
@@ -194,7 +195,10 @@ export const SLIDE_CONFIG = {
 	},
 
 	// Glitch vote sequence
-	'vote-glitch': { video: video('vote-glitch') },
+	'vote-glitch': {
+		vote: { type: 'single', characters: ISLAND_DATERS },
+		video: video('vote-glitch')
+	},
 	glitch2: { video: video('glitch2') },
 	'vote-alfie': {
 		vote: { type: 'double', characters: ['Alfie'], options: ['Yes', 'No'] } // "deserves to get laid AND get his bag!"
@@ -202,11 +206,7 @@ export const SLIDE_CONFIG = {
 
 	// Vote — Charlotte & Callum (binary)
 	'vote-cc': {
-		vote: {
-			type: 'double',
-			characters: ['Charlotte & Callum'],
-			options: ['Sweetie Pie', 'Boring Old Yawn']
-		},
+		vote: { type: 'single', characters: COUPLE_NAMES },
 		mobile: { id: 'vote-cc', title: 'Charlotte & Callum', text: 'VOTE NOW: are Charlotte & Callum' }
 	},
 	commercial3: { video: video('commercial3') },
@@ -228,12 +228,7 @@ export const SLIDE_CONFIG = {
 	},
 	// Results — winners (only custom=TRUE variant renders live)
 	'results-winners-cc': {
-		results: { type: 'winner', characters: COUPLE_NAMES },
-		mobile: {
-			id: 'results-winners-cc',
-			title: 'End',
-			text: 'Thanks for voting! See you next time!'
-		}
+		results: { type: 'winner', characters: COUPLE_NAMES }
 	}
 };
 

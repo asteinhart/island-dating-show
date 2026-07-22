@@ -8,7 +8,6 @@
 		videoSlides
 	} from '$lib/slideConfig';
 	import Video from '$lib/Video.svelte';
-	import VotePlaceholder from '$lib/VotePlaceholder.svelte';
 	import ResultsPlaceholder from '$lib/ResultsPlaceholder.svelte';
 	import Results from '$lib/Results.svelte';
 
@@ -44,6 +43,7 @@
 
 	let current = $state(0); // 0 = welcome slide, 1..n = PDF pages
 	let loadError = $state(slides.length ? '' : 'No slides found.');
+	let slideId = $derived(current === 0 ? 'first' : (slides[current - 1]?.id ?? null));
 
 	// Total = welcome slide + PDF pages.
 	let total = slides.length + 1;
@@ -176,12 +176,6 @@
 			{#key slide.id}
 				<Video src={cfg.video.src} loop={cfg.video.loop} onended={next} />
 			{/key}
-		{:else if cfg?.vote}
-			<VotePlaceholder
-				type={cfg.vote.type}
-				characters={cfg.vote.characters}
-				options={cfg.vote.options ?? []}
-			/>
 		{:else if cfg?.results}
 			<ResultsPlaceholder type={cfg.results.type} characters={cfg.results.characters ?? []} />
 		{:else}
@@ -197,7 +191,7 @@
 		{/if}
 	</div>
 
-	<div class="counter">{current + 1} / {total}</div>
+	<div class="counter">{current} / {total} {slideId}</div>
 </div>
 
 <style>

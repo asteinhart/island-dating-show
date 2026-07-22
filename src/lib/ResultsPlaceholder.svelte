@@ -3,9 +3,10 @@
 	// Reads its shape straight from slideConfig's `results` role.
 	//   type: 'full'   — complete ranking of all `characters`
 	//   type: 'winner' — highlight a single winning/placed entry
-	let { type = 'full', characters = [] } = $props();
+	let { type = 'full', characters = [], voteId } = $props();
 
-	// get results of vote from DB usin
+	// get results of vote from DB using get
+	//const results = await get(`/api/vote/${voteId}`);
 </script>
 
 <div class="results-placeholder">
@@ -34,7 +35,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 3cqh;
-		background: #0b1d3a;
+		background: linear-gradient(#ff40b5, #ffde59);
 		color: white;
 		font-family: system-ui, sans-serif;
 		text-align: center;

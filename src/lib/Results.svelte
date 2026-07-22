@@ -97,10 +97,7 @@
 {:else if outcomeSrc}
 	<img class="slide-img" src={outcomeSrc} alt={`Winner: ${outcome}`} draggable="false" />
 {:else}
-	<div class="waiting">
-		<p>{ready ? 'Waiting for votes…' : 'Tallying votes…'}</p>
-		{#if err}<p class="err">{err}</p>{/if}
-	</div>
+	<div class="waiting"></div>
 {/if}
 
 <style>
@@ -113,16 +110,7 @@
 	.waiting {
 		width: 100%;
 		height: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 1cqh;
-		background: #0b1d3a;
-		color: white;
-		font-family: system-ui, sans-serif;
-		font-size: 3cqw;
-		text-align: center;
+		background: linear-gradient(#ff40b5, #ffde59);
 	}
 	.err {
 		color: #ff9a9a;
