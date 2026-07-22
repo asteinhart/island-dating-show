@@ -54,7 +54,13 @@
 	});
 	const imgByKey = {};
 	for (const [path, url] of Object.entries(imgUrls)) {
-		imgByKey[path.split('/').pop().replace(/\.webp$/i, '').toUpperCase()] = url;
+		imgByKey[
+			path
+				.split('/')
+				.pop()
+				.replace(/\.webp$/i, '')
+				.toUpperCase()
+		] = url;
 	}
 	// Names that don't map to their own file 1:1.
 	const NAME_ALIASES = {
@@ -282,14 +288,13 @@
 		height: 4cqw;
 		border-radius: 50%;
 		object-fit: cover;
-		background: rgba(255, 255, 255, 0.2);
-		border: 2px solid rgba(255, 255, 255, 0.6);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		font-weight: 700;
 		font-size: 2cqw;
 	}
+
 	/* Overlap the two portraits of a couple slightly. */
 	.portraits img:not(:first-child),
 	.portraits .fallback:not(:first-child) {

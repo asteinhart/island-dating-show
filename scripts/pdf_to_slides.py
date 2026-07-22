@@ -22,11 +22,13 @@ from pathlib import Path
 # Project root is the parent of this script's directory.
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "output" / "slides"
+DEFAULT_CONFIG = ROOT / "input" / "ids_config.csv"
+S3_BUCKET = "https://island-dating-show.s3.amazonaws.com"  # for manifest.json
 
 # Fixed slide dimensions (16:9). Every page is rendered to exactly this size.
 WIDTH = 1440
 HEIGHT = 809
-QUALITY = 82
+QUALITY = 95
 
 
 def require(tool: str) -> str:
@@ -172,7 +174,12 @@ def main() -> None:
             run([magick, str(png), "-strip", "-quality", str(QUALITY), str(dest)])
             w, h = identify_size(magick, dest)
             size_kb = dest.stat().st_size / 1024
-            entry = {"src": f"slides/{name}", "w": w, "h": h, "id": ids.get(i)}
+            entry = {
+                "src": f"{S3_BUCKET}/slides/{name}",
+                "w": w,
+                "h": h,
+                "id": ids.get(i),
+            }
             manifest.append(entry)
             id_note = f"  #{entry['id']}" if entry["id"] else ""
             print(

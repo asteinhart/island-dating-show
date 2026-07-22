@@ -37,7 +37,24 @@ export const COUPLES = [
 	{ key: 'pr', name: 'Poppi & Rory' }
 ];
 
+export const COUPLES2 = [
+	{ key: 'aw', name: 'Allie & Women' },
+	{ key: 'cc', name: 'Charlotte & Callum' },
+	{ key: 'mt', name: 'Marta & Thaddeus' },
+	{ key: 'pr', name: 'Poppi & Rory' }
+];
+
+export const COUPLES3 = [
+	{ key: 'cc', name: 'Charlotte & Callum' },
+	{ key: 'hr', name: 'Henrietta & Rory' },
+	{ key: 'md', name: 'Marta & Sir David' },
+	{ key: 'pt', name: 'Poppi & Thaddeus' }
+];
+
 const COUPLE_NAMES = COUPLES.map((c) => c.name);
+const COUPLE_NAMES2 = COUPLES2.map((c) => c.name);
+const COUPLE_NAMES3 = COUPLES3.map((c) => c.name);
+
 const ISLAND_DATERS = [
 	'Charlotte',
 	'Callum',
@@ -56,7 +73,7 @@ const TYPE_OPTIONS = ["Each Other's Type to a T!", 'Major Typo!'];
 // the sequence so the per-place reveals shift with it. Per the script: the
 // Nameless Onscreen Woman is always first, and Alfie never places in the top three.
 const FAVORITE_RIG = {
-	forceFirst: ['Nameless Onscreen Woman'],
+	forceFirst: ['Woman'],
 	forceOutOfTop: [{ name: 'Alfie', n: 3 }]
 };
 
@@ -123,7 +140,7 @@ export const SLIDE_CONFIG = {
 		results: {
 			type: 'full',
 			characters: COUPLE_NAMES,
-			text: '', // TODO: score-screen copy shown to the right of the ranking
+			text: 'The Most Compatible Island Daters!', // TODO: score-screen copy shown to the right of the ranking
 			rankBy: Object.fromEntries(
 				COUPLES.map((c) => [c.name, { voteId: `type-${c.key}`, choice: TYPE_OPTIONS[0] }])
 			)
@@ -139,7 +156,7 @@ export const SLIDE_CONFIG = {
 	// Vote — hottest (binary)
 	'nameless-buttons': {},
 	'vote-hottest': {
-		vote: { type: 'double', characters: ISLAND_DATERS, options: ['Yes', 'No'] },
+		vote: { type: 'double', characters: ISLAND_DATERS, options: ['The hottest', 'THE HOTTEST'] },
 		mobile: { id: 'vote-hottest', title: 'Hottest', text: 'Is she the hottest or THE HOTTEST' }
 	},
 
@@ -161,9 +178,9 @@ export const SLIDE_CONFIG = {
 	// Commercials & glitches (video)
 	commercial1: { video: video('commercial1') },
 
-	// Challenge 2 — raftiest / craftiest (pick one dater)
+	// Challenge 2 — raftiest / craftiest (pick couple)
 	'vote-raftiest': {
-		vote: { type: 'single', characters: ISLAND_DATERS },
+		vote: { type: 'single', characters: COUPLE_NAMES2 },
 		mobile: {
 			id: 'vote-raftiest',
 			title: 'Raft',
@@ -173,7 +190,12 @@ export const SLIDE_CONFIG = {
 	// Results — challenge 2 winners (complete ranking of individual daters,
 	// tallied from the raftiest/craftiest vote).
 	'results-challenge-two': {
-		results: { type: 'full', characters: ISLAND_DATERS, text: '', voteId: 'vote-raftiest' }
+		results: {
+			type: 'full',
+			characters: COUPLE_NAMES2,
+			text: 'Raftiest, Craftiest Winners of Challenge #2!',
+			voteId: 'vote-raftiest'
+		}
 	},
 	'video-two-winner-aw': {
 		video: video('video-two-winner-aw'),
@@ -196,7 +218,7 @@ export const SLIDE_CONFIG = {
 
 	// Vote — favourite Island Dater (pick one individual dater)
 	'vote-favorite': {
-		vote: { type: 'single', characters: ISLAND_DATERS },
+		vote: { type: 'single', characters: ISLAND_DATERS.concat(['Woman']) },
 		mobile: {
 			id: 'vote-favorite',
 			title: 'Favorite',
@@ -259,25 +281,32 @@ export const SLIDE_CONFIG = {
 	},
 	glitch2: { video: video('glitch2') },
 	'vote-alfie': {
-		vote: { type: 'double', characters: ['Alfie'], options: ['Yes', 'No'] } // "deserves to get laid AND get his bag!"
+		vote: { type: 'double', characters: ['Alfie'], options: ['Yes', 'No'] },
+		mobile: {
+			id: 'vote-alfie',
+			title: 'Alfie',
+			text: 'Does Alfie deserve to get laid AND get his bag?'
+		}
 	},
 
 	// Vote — Charlotte & Callum (binary)
 	'vote-cc': {
-		vote: { type: 'single', characters: COUPLE_NAMES },
+		vote: {
+			type: 'double',
+			characters: COUPLE_NAMES,
+			options: ['Sweetie Pie', 'BORING OLD YAWN TOMATO TOMATO TOMATO']
+		},
 		mobile: { id: 'vote-cc', title: 'Charlotte & Callum', text: 'VOTE NOW: are Charlotte & Callum' }
 	},
 	commercial3: { video: video('commercial3') },
 	'love-nest2': { mobile: { id: 'love-nest2', title: 'Thanks', text: 'Thanks for voting!' } },
 
-	// Countdown & finale
-	'video-timer': { video: video('video-timer') },
 	'glitch-loop': { video: video('glitch-loop', { loop: true }) },
 	explosion: { video: video('explosion') },
 
 	// Final vote — favourite couple
 	'vote-favorite2': {
-		vote: { type: 'single', characters: COUPLE_NAMES },
+		vote: { type: 'single', characters: COUPLE_NAMES3 },
 		mobile: {
 			id: 'vote-favorite2',
 			title: 'Final Vote',
@@ -286,7 +315,7 @@ export const SLIDE_CONFIG = {
 	},
 	// Results — winners (only custom=TRUE variant renders live)
 	'results-winners-cc': {
-		results: { type: 'winner', characters: COUPLE_NAMES }
+		results: { type: 'winner', characters: COUPLE_NAMES3 }
 	}
 };
 

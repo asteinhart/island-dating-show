@@ -1,6 +1,5 @@
 <script>
-	import manifest from '$lib/assets/slides/manifest.json';
-	import { sceneIdForSlideId } from '$lib/voterScenes';
+	import manifest from '$lib/assets/manifest.json';
 	import {
 		getSlideConfig,
 		resultsGroupByPrimary,
@@ -10,17 +9,13 @@
 	import Video from '$lib/Video.svelte';
 	import ResultsPlaceholder from '$lib/ResultsPlaceholder.svelte';
 	import Results from '$lib/Results.svelte';
-
-	// Eagerly resolve every slide image to its final built URL, keyed by module path.
-	const urls = import.meta.glob('$lib/assets/slides/*.webp', {
-		eager: true,
-		query: '?url',
-		import: 'default'
-	});
+	import Countdown from '$lib/Countdown.svelte';
 
 	// Index the resolved URLs by filename so we can look them up from the manifest.
 	const urlByName = {};
-	for (const [path, url] of Object.entries(urls)) {
+	for (const [path, url] of Object.entries(
+		manifest.slides.reduce((acc, s) => ({ ...acc, [s.src.split('/').pop()]: s.src }), {})
+	)) {
 		urlByName[path.split('/').pop()] = url;
 	}
 
@@ -106,7 +101,7 @@
 	// manifest id via SLIDE_SCENE. Runs client-side only, once per slide change.
 	$effect(() => {
 		const slideId = current === 0 ? null : (slides[current - 1]?.id ?? null);
-		const state = sceneIdForSlideId(slideId);
+		const state = 'none';
 		fetch('/api/state', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
@@ -146,6 +141,8 @@
 					<p class="hint">{loadError}</p>
 				{/if}
 			</div>
+		{:else if slide.id === 'video-timer'}
+			<Countdown value={10} />
 		{:else if group}
 			<!-- Outcome reveal: poll the vote, then reveal the chosen couple's pre-made
 			     image, or play their pre-made clip and advance when it ends. Checked
@@ -172,9 +169,9 @@
 				{/if}
 			{/key}
 		{:else if cfg?.video}
-			<!-- Video slide: autoplay, advance to the next slide when it ends. -->
+			<!-- Video slide: loop, advance to the next slide when the user clicks. -->
 			{#key slide.id}
-				<Video src={cfg.video.src} loop={cfg.video.loop} onended={next} />
+				<Video src={cfg.video.src} loop={true} />
 			{/key}
 		{:else if cfg?.results}
 			<!-- Live ranking: poll the vote tally and rank the entries. -->
