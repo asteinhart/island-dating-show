@@ -276,7 +276,6 @@ export const SLIDE_CONFIG = {
 
 	// Glitch vote sequence
 	'vote-glitch': {
-		vote: { type: 'single', characters: ISLAND_DATERS },
 		video: video('vote-glitch')
 	},
 	glitch2: { video: video('glitch2') },
