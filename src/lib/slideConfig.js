@@ -38,7 +38,7 @@ export const COUPLES = [
 ];
 
 export const COUPLES2 = [
-	{ key: 'aw', name: 'Allie & Woman' },
+	{ key: 'aw', name: 'Alfie & Woman' },
 	{ key: 'cc', name: 'Charlotte & Callum' },
 	{ key: 'mt', name: 'Marta & Thaddeus' },
 	{ key: 'pr', name: 'Poppi & Rory' }
@@ -156,7 +156,11 @@ export const SLIDE_CONFIG = {
 	// Vote — hottest (binary)
 	'nameless-buttons': {},
 	'vote-hottest': {
-		vote: { type: 'double', characters: ISLAND_DATERS, options: ['The hottest', 'THE HOTTEST'] },
+		vote: {
+			type: 'double',
+			characters: ISLAND_DATERS,
+			options: ['The hottest 🔥', 'THE HOTTEST 🔥🔥🔥']
+		},
 		mobile: { id: 'vote-hottest', title: 'Hottest', text: 'Is she the hottest or THE HOTTEST' }
 	},
 
@@ -266,7 +270,8 @@ export const SLIDE_CONFIG = {
 			text: '',
 			voteId: 'vote-favorite',
 			...FAVORITE_RIG,
-			forceLast: ['Callum'] // script: Callum's ranking drops to the bottom
+			forceLast: ['Callum'], // script: Callum's ranking drops to the bottom
+			animateDrop: 'Callum' // ...and animate him falling there one rank at a time
 		}
 	},
 
@@ -294,7 +299,7 @@ export const SLIDE_CONFIG = {
 		vote: {
 			type: 'double',
 			characters: COUPLE_NAMES,
-			options: ['Sweetie Pie', 'BORING OLD YAWN TOMATO TOMATO TOMATO']
+			options: ['sweetie pie 😊', 'BORING OLD YAWN TOMATO TOMATO TOMATO 🍅🍅🍅']
 		},
 		mobile: { id: 'vote-cc', title: 'Charlotte & Callum', text: 'VOTE NOW: are Charlotte & Callum' }
 	},

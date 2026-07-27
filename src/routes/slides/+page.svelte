@@ -7,8 +7,8 @@
 		videoSlides
 	} from '$lib/slideConfig';
 	import Video from '$lib/Video.svelte';
-	import ResultsPlaceholder from '$lib/ResultsPlaceholder.svelte';
 	import Results from '$lib/Results.svelte';
+	import Outcome from '$lib/Outcome.svelte';
 	import Countdown from '$lib/Countdown.svelte';
 
 	// Index the resolved URLs by filename so we can look them up from the manifest.
@@ -153,7 +153,7 @@
 			     playing its own single take. -->
 			{#key slide.id}
 				{#if group.kind === 'video'}
-					<Results
+					<Outcome
 						voteId={group.voteId}
 						choiceToId={group.choiceToId}
 						srcById={videoSrcById}
@@ -163,7 +163,7 @@
 						onended={next}
 					/>
 				{:else}
-					<Results
+					<Outcome
 						voteId={group.voteId}
 						choiceToId={group.choiceToId}
 						{srcById}
@@ -179,7 +179,7 @@
 		{:else if cfg?.results}
 			<!-- Live ranking: poll the vote tally and rank the entries. -->
 			{#key slide.id}
-				<ResultsPlaceholder {...cfg.results} />
+				<Results {...cfg.results} />
 			{/key}
 		{:else}
 			<img
