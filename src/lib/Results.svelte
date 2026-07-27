@@ -1,3 +1,14 @@
+<script module>
+	// Latest tally per (date, voteId), shared across every <Results> instance. The
+	// deck remounts a fresh <Results> per slide, so without this a slide would open on
+	// an empty tally (a zero-vote ordering) until its own first fetch lands. Seeding
+	// from this cache lets a slide paint the ranking the previous slide was already
+	// showing — e.g. results-edited opens exactly where results-rigged left off, then
+	// animates the drop from there rather than snapping into place first.
+	const tallyCache = new Map();
+	const tallyKey = (date, vid) => `${date}|${vid}`;
+</script>
+
 <script>
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -35,7 +46,25 @@
 		pollMs = 2000 // keep re-tallying so the ranking tracks late votes
 	} = $props();
 
-	let tallies = $state({}); // { voteId: { choice: count } }
+	// Vote ids this ranking depends on. Plain function (not a $derived) so it can seed
+	// `tallies` from the cache before any reactive state exists.
+	function neededVoteIds() {
+		const ids = new Set();
+		if (rankBy) for (const v of Object.values(rankBy)) ids.add(v.voteId);
+		else if (voteId) ids.add(voteId);
+		return [...ids];
+	}
+
+	// Open on the last-known tally (see the cache above) so the first frame already
+	// matches the previous slide, instead of a zero-vote placeholder.
+	// svelte-ignore state_referenced_locally
+	let tallies = $state(
+		Object.fromEntries(
+			neededVoteIds()
+				.map((vid) => [vid, tallyCache.get(tallyKey(date, vid))])
+				.filter(([, t]) => t)
+		)
+	); // { voteId: { choice: count } }
 	let ready = $state(false); // has the first poll landed?
 	let err = $state('');
 
@@ -138,35 +167,26 @@
 	const dropTimers = [];
 	let dropStarted = false;
 
-	// `animateDrop`'s honest rank: its index in the ranking computed WITHOUT pinning
-	// it last (i.e. exactly where the preceding rigged reveal shows it).
-	function honestDropIndex() {
+	// The order the fall STARTS from: the honest ranking WITHOUT pinning `animateDrop`
+	// last — i.e. exactly what the preceding results-rigged slide shows. Seeding the
+	// first frame from this (plus the shared tally cache above) means results-edited
+	// opens right where results-rigged left off, then walks `animateDrop` down to last.
+	function dropStartOrder() {
 		return applyOverrides(
 			rank(characters),
 			forceLast.filter((n) => n !== animateDrop)
-		).indexOf(animateDrop);
+		);
 	}
-	// The order the fall STARTS from. Built from `ranked` — the canonical edited order
-	// that honours EVERY override (so Alfie is already held out of the top 3) — by
-	// lifting only `animateDrop` back up to its honest rank. Walking it straight back
-	// down to last therefore lands exactly on `ranked` and never lifts another rigged
-	// entry (e.g. Alfie) into the top 3 on the way. (Basing this on the honest order
-	// instead would let Alfie rise as Callum falls past him — the bug this avoids.)
-	function dropStartArrangement() {
-		const from = Math.max(0, honestDropIndex());
-		const rest = ranked.filter((c) => c !== animateDrop);
-		return [...rest.slice(0, from), animateDrop, ...rest.slice(from)];
-	}
-	// First paint already shows the "before" order, so Callum never flashes at the
-	// bottom before rising to his spot. Props are fixed for this mount (the deck
-	// remounts <Results> per slide), so seeding from their initial value is safe.
+	// First paint already shows that "before" order, so Callum never flashes at the
+	// bottom before falling. Props are fixed for this mount (the deck remounts
+	// <Results> per slide), so seeding from their initial value is safe.
 	// svelte-ignore state_referenced_locally
-	let displayOrder = $state(animateDrop && type === 'full' ? dropStartArrangement() : null);
+	let displayOrder = $state(animateDrop && type === 'full' ? dropStartOrder() : null);
 	// The list actually rendered: the animation's frozen order if set, else live.
 	let listOrder = $derived(displayOrder ?? ranked);
 
 	function startDropAnimation() {
-		let order = dropStartArrangement();
+		let order = dropStartOrder();
 		const from = order.indexOf(animateDrop);
 		const to = order.length - 1;
 		if (from < 0 || from >= to) return; // already last (or absent) — nothing to drop
@@ -193,12 +213,7 @@
 
 	// --- data -------------------------------------------------------------------
 	// Every distinct poll this ranking depends on.
-	let voteIdsToFetch = $derived.by(() => {
-		const ids = new Set();
-		if (rankBy) for (const v of Object.values(rankBy)) ids.add(v.voteId);
-		else if (voteId) ids.add(voteId);
-		return [...ids];
-	});
+	let voteIdsToFetch = $derived.by(neededVoteIds);
 
 	async function refresh() {
 		try {
@@ -210,6 +225,8 @@
 				})
 			);
 			tallies = next;
+			// Feed the shared cache so the next slide's <Results> opens on this ranking.
+			for (const [vid, tally] of Object.entries(next)) tallyCache.set(tallyKey(date, vid), tally);
 		} catch (e) {
 			err = e.message;
 		} finally {
