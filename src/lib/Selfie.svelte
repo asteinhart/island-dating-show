@@ -71,7 +71,7 @@
 </script>
 
 <div class="container">
-	<div class="header poppins-bold">I’M THE HOTTEST BOMBSHELL</div>
+	<div class="header poppins-bold">THE HOTTEST BOMBSHELL</div>
 	<div class="img-container">
 		<button type="button" class="img-button" onclick={pickPhoto}>
 			<div class="heart">
@@ -91,7 +91,7 @@
 			hidden
 		/>
 	</div>
-	<div class="footer poppins-bold">AT ISLAND <br />DATING SHOW</div>
+	<div class="footer poppins-bold">AT <i> ISLAND <br />DATING SHOW</i></div>
 </div>
 
 <style>
@@ -145,7 +145,8 @@
 
 	.header,
 	.footer {
-		font-size: 2.5rem;
+		font-size: 2.7rem;
 		margin: 1rem 0;
+		line-height: 1.2;
 	}
 </style>
