@@ -145,7 +145,7 @@
 				draggable="false"
 			/>
 		{:else if slide.id === 'video-timer'}
-			<Countdown value={10} />
+			<Countdown value={5} />
 		{:else if group}
 			<!-- Outcome reveal: poll the vote, then reveal the chosen couple's pre-made
 			     image, or play their pre-made clip and advance when it ends. Checked
