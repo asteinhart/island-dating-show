@@ -75,11 +75,13 @@
 	<div class="img-container">
 		<button type="button" class="img-button" onclick={pickPhoto}>
 			<div class="heart">
-				{#if hasPhoto}
-					<img src={imgSrc} alt="Selfie" />
-				{:else}
-					<span class="prompt poppins-bold">Click to add <br />your image</span>
-				{/if}
+				<div class="heart-inner">
+					{#if hasPhoto}
+						<img src={imgSrc} alt="Selfie" />
+					{:else}
+						<span class="prompt poppins-bold">Click to add <br />your image</span>
+					{/if}
+				</div>
 			</div>
 		</button>
 		<input
@@ -120,17 +122,32 @@
 	}
 
 	.heart {
+		--heart: shape(from 50% 91%, line to 90% 50%, arc to 50% 9% of 1%, arc to 10% 50% of 1%);
 		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		height: 100%;
 		aspect-ratio: 1;
-		background: rgba(255, 255, 255, 0.15);
-		clip-path: shape(from 50% 91%, line to 90% 50%, arc to 50% 9% of 1%, arc to 10% 50% of 1%);
+		margin-top: 5%;
+		/* Solid white heart that shows through as the border around the inset content. */
+		background: #fff;
+		clip-path: var(--heart);
+		filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
 	}
 
-	.heart img {
+	.heart-inner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 94%;
+		height: 94%;
+		overflow: hidden;
+		background: rgba(255, 255, 255, 0.15);
+		clip-path: var(--heart);
+	}
+
+	.heart-inner img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
