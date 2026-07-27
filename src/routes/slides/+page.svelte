@@ -133,14 +133,17 @@
 >
 	<div class="stage">
 		{#if current === 0}
-			<!-- Welcome / title slide -->
-			<div class="welcome">
-				<div class="dancing-script-medium">Welcome to</div>
-				<div class="poppins-bold">Island Dating Show</div>
-				{#if loadError}
-					<p class="hint">{loadError}</p>
-				{/if}
-			</div>
+			<!--use final slide for introduction -->
+
+			<img
+				id="title-final"
+				class="slide-img"
+				src="https://island-dating-show.s3.amazonaws.com/slides/slide-122.webp"
+				width="1440"
+				height="809"
+				alt={'title-final' ?? `Slide ${current}`}
+				draggable="false"
+			/>
 		{:else if slide.id === 'video-timer'}
 			<Countdown value={10} />
 		{:else if group}
@@ -169,9 +172,9 @@
 				{/if}
 			{/key}
 		{:else if cfg?.video}
-			<!-- Video slide: loop, advance to the next slide when the user clicks. -->
+			<!-- Video slide: advance to the next slide when the clip ends (unless it loops). -->
 			{#key slide.id}
-				<Video src={cfg.video.src} loop={true} />
+				<Video src={cfg.video.src} loop={cfg.video.loop} onended={next} />
 			{/key}
 		{:else if cfg?.results}
 			<!-- Live ranking: poll the vote tally and rank the entries. -->

@@ -38,7 +38,7 @@ export const COUPLES = [
 ];
 
 export const COUPLES2 = [
-	{ key: 'aw', name: 'Allie & Women' },
+	{ key: 'aw', name: 'Allie & Woman' },
 	{ key: 'cc', name: 'Charlotte & Callum' },
 	{ key: 'mt', name: 'Marta & Thaddeus' },
 	{ key: 'pr', name: 'Poppi & Rory' }
@@ -172,7 +172,8 @@ export const SLIDE_CONFIG = {
 		}
 	},
 	'video-henrietta-lonely': {
-		mobile: { id: 'video-henrietta-lonely', title: 'Thanks', text: 'Thanks for voting!' }
+		mobile: { id: 'video-henrietta-lonely', title: 'Thanks', text: 'Thanks for voting!' },
+		video: video('video-henrietta-lonely', { loop: false })
 	},
 
 	// Commercials & glitches (video)
@@ -378,7 +379,7 @@ export const RESULTS_GROUPS = {
 	'vote-favorite2': {
 		voteId: 'vote-favorite2',
 		primaryId: 'results-winners-cc',
-		choiceToId: Object.fromEntries(COUPLES.map((c) => [c.name, `results-winners-${c.key}`]))
+		choiceToId: Object.fromEntries(COUPLES3.map((c) => [c.name, `results-winners-${c.key}`]))
 	},
 
 	// --- video reveals (results lead to the matching clip, then advance) -------

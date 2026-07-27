@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 Fixes
 23 website video-first-loser-cc most no votes
 39 downloaded wrong 
@@ -32,3 +33,15 @@ update slides (maybe aws)
 
 
 
+=======
+Fix voting slides page
+Fix results page
+Review mobile slides
+Put videos on s3 and update src 
+fix tallying votes state
+84 vote-favorite, different results
+last vote?
+
+
+intermission...
+>>>>>>> Stashed changes
