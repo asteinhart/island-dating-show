@@ -212,7 +212,6 @@ export const SLIDE_CONFIG = {
 
 	// Intermission
 	'vote-intermission': {
-		vote: { type: 'single', characters: ISLAND_DATERS },
 		mobile: {
 			id: 'vote-intermission',
 			title: 'Intermission Prompts',

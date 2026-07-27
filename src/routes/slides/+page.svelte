@@ -10,6 +10,7 @@
 	import Results from '$lib/Results.svelte';
 	import Outcome from '$lib/Outcome.svelte';
 	import Countdown from '$lib/Countdown.svelte';
+	import Selfie from '$lib/Selfie.svelte';
 
 	// Index the resolved URLs by filename so we can look them up from the manifest.
 	const urlByName = {};

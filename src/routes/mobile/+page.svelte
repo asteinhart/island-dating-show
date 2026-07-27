@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Vote from '$lib/Vote.svelte';
+	import Selfie from '$lib/Selfie.svelte';
 	import { getSlideConfig, voteOptionsForSlide } from '$lib/slideConfig';
 
 	const POLL_MS = 1500;
@@ -64,8 +65,8 @@
 		{:else if cfg.mobile.id === 'results-winners-cc'}
 			<h3 class="poppins-bold">Thanks for voting!</h3>
 			<h3 class="poppins-bold">See you next time!</h3>
-
-			<!-- TODO add image logo here -->
+		{:else if cfg.mobile.id === 'vote-intermission'}
+			<Selfie />
 		{:else}
 			<div class="main"></div>
 		{/if}
