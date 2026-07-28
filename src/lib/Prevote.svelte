@@ -94,7 +94,7 @@
 		gap: 3cqw;
 		padding: 4cqw 5cqw;
 		box-sizing: border-box;
-		background: #54b4d8;
+		background: #06aedb;
 		color: #fff;
 		font-family: 'Poppins', sans-serif;
 	}
