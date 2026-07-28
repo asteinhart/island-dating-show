@@ -341,7 +341,7 @@
 		max-width: 60cqw;
 	}
 	.copy {
-		font-size: 4cqw;
+		font-size: 6cqw;
 		font-weight: 700;
 		line-height: 1.25;
 		margin: 0;
@@ -391,7 +391,6 @@
 	.portraits .fallback {
 		width: var(--sz);
 		height: var(--sz);
-		border-radius: 50%;
 		object-fit: cover;
 		display: inline-flex;
 		align-items: center;

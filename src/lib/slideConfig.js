@@ -161,7 +161,11 @@ export const SLIDE_CONFIG = {
 			characters: ISLAND_DATERS,
 			options: ['The hottest 🔥', 'THE HOTTEST 🔥🔥🔥']
 		},
-		mobile: { id: 'vote-hottest', title: 'Hottest', text: 'Is she the hottest or THE HOTTEST' }
+		mobile: {
+			id: 'vote-hottest',
+			title: 'Hottest',
+			text: 'Is she the hottest or is she THE HOTTEST'
+		}
 	},
 
 	message2: { mobile: { id: 'message2', title: 'Thanks', text: 'Thanks for voting!' } },
@@ -379,6 +383,13 @@ export const RESULTS_GROUPS = {
 		choiceToId: Object.fromEntries(
 			COUPLES.map((c) => [c.name, `results-first-impression-${c.key}`])
 		)
+	},
+	'vote-raftiest': {
+		voteId: 'vote-raftiest',
+		primaryId: 'video-two-winner-aw',
+		kind: 'video',
+		// choices are the full couple names the phone submits (COUPLE_NAMES).
+		choiceToId: Object.fromEntries(COUPLES2.map((c) => [c.name, `video-two-winner-${c.key}`]))
 	},
 	'vote-favorite2': {
 		voteId: 'vote-favorite2',

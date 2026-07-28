@@ -216,7 +216,6 @@
 		flex-shrink: 0;
 		width: 5rem;
 		height: 5rem;
-		border-radius: 50%;
 		object-fit: cover;
 	}
 

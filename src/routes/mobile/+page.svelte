@@ -143,23 +143,4 @@
 		opacity: 0.9;
 		max-width: 30ch;
 	}
-	.waiting {
-		color: rgba(0, 0, 0, 0.6);
-	}
-	.info,
-	.idle {
-		text-align: center;
-		color: white;
-		font-size: 5rem;
-	}
-	.info .dancing-script-medium,
-	.idle .dancing-script-medium {
-		font-size: 2.5rem;
-		line-height: 1.1;
-	}
-	.info p,
-	.idle p {
-		margin: 0.5rem 0 0;
-		opacity: 0.9;
-	}
 </style>

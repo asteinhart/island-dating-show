@@ -71,7 +71,7 @@
 </script>
 
 <div class="container">
-	<div class="header poppins-bold">THE HOTTEST BOMBSHELL</div>
+	<div class="header poppins-bold">I'M THE HOTTEST BOMBSHELL</div>
 	<div class="img-container">
 		<button type="button" class="img-button" onclick={pickPhoto}>
 			<div class="heart">
