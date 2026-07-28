@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import QR from '$lib/assets/qr.png';
 
 	// Pre-show holding screen for the deck (slide 0). LEFT: the three setpiece
 	// props, each a thumbnail + its live vote bar, re-ranked as votes land. RIGHT:
@@ -81,7 +82,9 @@
 	<div class="right">
 		<p class="cta">VOTE NOW for your favorite setpiece icon!</p>
 		<!-- QR code placeholder; drop the supplied <img> in here. -->
-		<div class="qr" aria-label="QR code"></div>
+		<div class="qr" aria-label="QR code">
+			<img src={QR} alt="QR code" />
+		</div>
 	</div>
 </div>
 
@@ -184,5 +187,11 @@
 		aspect-ratio: 1 / 1;
 		background: #000;
 		border-radius: 1cqw;
+	}
+
+	.qr img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 </style>
