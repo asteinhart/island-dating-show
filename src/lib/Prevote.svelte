@@ -19,6 +19,26 @@
 		{ name: 'Drunk Flamingo', color: '#27ae60' } // green
 	];
 
+	// Prop photos live alongside the character portraits in ./assets/characters/,
+	// keyed by uppercased file name (e.g. "Musical Unicorn.webp" -> MUSICAL UNICORN).
+	// A prop with no matching file falls back to its colour swatch below.
+	const imageModules = import.meta.glob('./assets/characters/*.webp', {
+		eager: true,
+		query: '?url',
+		import: 'default'
+	});
+	const imageByName = {};
+	for (const [path, url] of Object.entries(imageModules)) {
+		const key = path
+			.split('/')
+			.pop()
+			.replace(/\.(webp|png)$/i, '')
+			.trim()
+			.toUpperCase();
+		imageByName[key] = url;
+	}
+	const imageFor = (name) => imageByName[name.trim().toUpperCase()] ?? null;
+
 	let tally = $state({}); // { propName: count }
 	let total = $state(0);
 
@@ -34,7 +54,13 @@
 	let ranked = $derived(
 		PROPS.map((p, i) => {
 			const count = tally[p.name] ?? 0;
-			return { ...p, i, count, pct: total ? Math.round((count / total) * 100) : 0 };
+			return {
+				...p,
+				i,
+				count,
+				img: imageFor(p.name),
+				pct: total ? Math.round((count / total) * 100) : 0
+			};
 		}).sort((a, b) => b.count - a.count || a.i - b.i)
 	);
 
@@ -66,8 +92,11 @@
 	<div class="left">
 		{#each ranked as p, i (p.name)}
 			<div class="row" animate:flip={{ duration: 500 }}>
-				<!-- Placeholder swatch; swap for <img src={p.img} /> once photos exist. -->
-				<div class="thumb" style="background: {p.color}"></div>
+				<!-- Prop photo when one exists; the colour swatch shows through behind
+				     transparent PNGs and stands in entirely when there's no file yet. -->
+				<div class="thumb" style="background: {p.color}">
+					{#if p.img}<img src={p.img} alt={p.name} />{/if}
+				</div>
 				<div class="info">
 					<div class="name">{i + 1}. {p.name}</div>
 					<div class="bar-row">
@@ -123,6 +152,12 @@
 		border-radius: 1cqw;
 		border: 0.5cqw solid #fff;
 		box-shadow: 0 0.4cqw 1.2cqw rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+	}
+	.thumb img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 	.info {
 		flex: 1 1 auto;

@@ -16,7 +16,7 @@
 	// Portraits live in ./assets/characters/<NAME>.webp (uppercase). We glob them
 	// once at build time and map by uppercased name so an option string like
 	// "Charlotte & Callum" or "Poppi" can look up the right face(s) at runtime.
-	const imageModules = import.meta.glob('./assets/characters/*.webp', {
+	const imageModules = import.meta.glob('./assets/characters/*.{webp,png}', {
 		eager: true,
 		query: '?url',
 		import: 'default'
@@ -26,7 +26,7 @@
 		const key = path
 			.split('/')
 			.pop()
-			.replace(/\.webp$/i, '')
+			.replace(/\.(webp|png)$/i, '')
 			.trim()
 			.toUpperCase();
 		imageByName[key] = url;
