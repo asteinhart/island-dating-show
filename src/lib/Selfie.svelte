@@ -192,6 +192,7 @@
 
 	.img-container {
 		height: 50vh;
+		margin-top: -2rem;
 	}
 
 	.img-button {

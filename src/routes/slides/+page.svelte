@@ -37,7 +37,7 @@
 	// deck; its <Results> component reveals the right member image from the vote.
 	const slides = allSlides.filter((s) => !isCollapsedGroupMember(s.id));
 
-	let current = $state(0); // 0 = welcome slide, 1..n = PDF pages
+	let current = $state(-1); // 0 = welcome slide, 1..n = PDF pages
 	let loadError = $state(slides.length ? '' : 'No slides found.');
 	let slideId = $derived(current === 0 ? 'first' : (slides[current - 1]?.id ?? null));
 
@@ -54,7 +54,7 @@
 		if (current < total - 1) current += 1;
 	}
 	function prev() {
-		if (current > 0) current -= 1;
+		if (current > -1) current -= 1;
 	}
 
 	function onKey(e) {
@@ -133,7 +133,13 @@
 	onclick={onClick}
 >
 	<div class="stage">
-		{#if current === 0}
+		{#if current === -1}
+			<div class="welcome">
+				<h1 class="poppins-bold">Island Dating Show</h1>
+				<h2 class="dancing-script-medium">Welcome to the show!</h2>
+				<p class="hint">Use the arrow keys or click to advance the slides.</p>
+			</div>
+		{:else if current === 0}
 			<!--use final slide for introduction -->
 
 			<img
