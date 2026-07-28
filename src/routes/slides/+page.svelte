@@ -9,6 +9,7 @@
 	import Video from '$lib/Video.svelte';
 	import Results from '$lib/Results.svelte';
 	import Outcome from '$lib/Outcome.svelte';
+	import Prevote from '$lib/Prevote.svelte';
 	import Countdown from '$lib/Countdown.svelte';
 	import Selfie from '$lib/Selfie.svelte';
 
@@ -38,8 +39,9 @@
 	const slides = allSlides.filter((s) => !isCollapsedGroupMember(s.id));
 
 	let current = $state(-1); // 0 = welcome slide, 1..n = PDF pages
+	$inspect('current', current);
 	let loadError = $state(slides.length ? '' : 'No slides found.');
-	let slideId = $derived(current === 0 ? 'first' : (slides[current - 1]?.id ?? null));
+	let slideId = $derived(current === 0 ? 'vote-preshow' : (slides[current - 1]?.id ?? null));
 
 	// Total = welcome slide + PDF pages.
 	let total = slides.length + 1;
@@ -101,14 +103,16 @@
 	// is the welcome screen (id = undefined -> 'idle'); slides 1..n map by their
 	// manifest id via SLIDE_SCENE. Runs client-side only, once per slide change.
 	$effect(() => {
-		const slideId = current === 0 ? null : (slides[current - 1]?.id ?? null);
+		// Slide 0 is the pre-show vote screen; publish its id so phones switch to the
+		// setpiece-icon vote. Slides 1..n map by their manifest id.
+		const slideId = current === 0 ? 'vote-preshow' : (slides[current - 1]?.id ?? null);
 		const state = 'none';
 		fetch('/api/state', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({ state, slideId })
 		}).catch(() => {}); // a dropped sync just means voters update on the next change
-		console.log(`Slide ${current} (${slideId ?? 'welcome'}) -> scene "${state}"`); // eslint-disable-line no-console
+		//console.log(`Slide ${current} (${slideId ?? 'welcome'}) -> scene "${state}"`); // eslint-disable-line no-console
 	});
 
 	// Preload the neighbouring PDF slide so advancing feels instant.
@@ -134,12 +138,6 @@
 >
 	<div class="stage">
 		{#if current === -1}
-			<div class="welcome">
-				<h1 class="poppins-bold">Island Dating Show</h1>
-				<h2 class="dancing-script-medium">Welcome to the show!</h2>
-				<p class="hint">Use the arrow keys or click to advance the slides.</p>
-			</div>
-		{:else if current === 0}
 			<!--use final slide for introduction -->
 
 			<img
@@ -151,6 +149,8 @@
 				alt={'title-final' ?? `Slide ${current}`}
 				draggable="false"
 			/>
+		{:else if current === 0}
+			<Prevote />
 		{:else if slide.id === 'video-timer'}
 			<Countdown value={5} />
 		{:else if group}

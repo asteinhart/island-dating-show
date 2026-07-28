@@ -1,5 +1,6 @@
 Page #,Slide,Stage Direction in Script,custom,id,Type,Visuals,Text ,Voting Results ,Result Type,Slide,Title,Text
-,0,Pre-show,,title-start,Image,Title Card,,,,,,
+,-1,Pre-show,,title-start,Image,Title Card,,,,,,
+,0,Thaddeus!,FALSE,pre-vote,Image,Alert,Thaddeus!,,,,,
 1,1,(A desolate space is illuminated by only the dim glow of a giant Score Screen that hangs in the background.,FALSE,black1,Image,Black,,,,1,Welcome,Welcome to Island Dating Show. Voting will begin shortly.
 ,2, then displays a hauntingly abrasive explosion of neon.),FALSE,pink1,Image,Pink background,Island Dating Show,,,,,
 3,3,"(The SCORE SCREEN illuminates, which reads “Pull out your phone & get ready to VOTE!” A QR code appears.)",FALSE,get-ready1,Image,Vote + QR code,Get out your phone & get ready to VOTE!,,,3,Get Ready,Get Ready To Vote!
