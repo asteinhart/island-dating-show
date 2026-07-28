@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
-	import QR from '$lib/assets/qr.png';
+	import QR from '$lib/assets/QR.webp';
 
 	// Pre-show holding screen for the deck (slide 0). LEFT: the three setpiece
 	// props, each a thumbnail + its live vote bar, re-ranked as votes land. RIGHT:
@@ -150,7 +150,7 @@
 		width: 12cqw;
 		aspect-ratio: 1 / 1;
 		border-radius: 1cqw;
-		border: 0.5cqw solid #fff;
+		border: 0.3cqw solid #fff;
 		box-shadow: 0 0.4cqw 1.2cqw rgba(0, 0, 0, 0.2);
 		overflow: hidden;
 	}
@@ -220,7 +220,6 @@
 	.qr {
 		width: 20cqw;
 		aspect-ratio: 1 / 1;
-		background: #000;
 		border-radius: 1cqw;
 	}
 
