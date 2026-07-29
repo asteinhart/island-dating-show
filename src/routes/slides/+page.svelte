@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import manifest from '$lib/assets/manifest.json';
 	import {
 		getSlideConfig,
@@ -38,25 +39,43 @@
 	// deck; its <Results> component reveals the right member image from the vote.
 	const slides = allSlides.filter((s) => !isCollapsedGroupMember(s.id));
 
-	let current = $state(-1); // 0 = welcome slide, 1..n = PDF pages
+	let current = $state(1);
 	$inspect('current', current);
+
+	// On (re)load, resume from the slide saved in the database instead of resetting
+	// to the intro. Until this finishes, the sync effect below holds off posting so
+	// it can't clobber the saved slide with the reset value.
+	let restored = $state(false);
+	onMount(async () => {
+		try {
+			const res = await fetch('/api/state');
+			const { slideId } = await res.json();
+
+			const idx = slides.findIndex((s) => s.id === slideId);
+			if (idx !== -1) current = idx + 1;
+		} catch {
+			// no saved state (or fetch failed) -> stay on the intro slide
+		} finally {
+			restored = true;
+		}
+	});
 	let loadError = $state(slides.length ? '' : 'No slides found.');
-	let slideId = $derived(current === 0 ? 'vote-preshow' : (slides[current - 1]?.id ?? null));
+	let slideId = $derived(slides[current - 1]?.id ?? null);
 
-	// Total = welcome slide + PDF pages.
-	let total = slides.length + 1;
+	// Total number of slides in the deck (1-based: current 1..total).
+	let total = slides.length;
 
-	// The current PDF slide (null on the welcome screen) and its config role.
-	let slide = $derived(current === 0 ? null : (slides[current - 1] ?? null));
+	// The current slide (1-based: current 1 -> slides[0]) and its config role.
+	let slide = $derived(slides[current - 1]);
 	let cfg = $derived(slide ? getSlideConfig(slide.id) : null);
 	// If this slide is a winner-reveal group's primary, drive it live with <Results>.
 	let group = $derived(slide ? resultsGroupByPrimary(slide.id) : null);
 
 	function next() {
-		if (current < total - 1) current += 1;
+		if (current < total) current += 1;
 	}
 	function prev() {
-		if (current > -1) current -= 1;
+		if (current > 1) current -= 1;
 	}
 
 	function onKey(e) {
@@ -76,14 +95,19 @@
 				break;
 			case 'Home':
 				e.preventDefault();
-				current = 0;
+				current = 1;
 				break;
 			case 'End':
 				e.preventDefault();
-				current = total - 1;
+				current = total;
 				break;
 			case 'f':
 				toggleFullscreen();
+				break;
+			case 'r':
+			case 'R':
+				e.preventDefault();
+				current = 1;
 				break;
 		}
 	}
@@ -99,13 +123,15 @@
 		else prev();
 	}
 
-	// Tell the voters' phones which scene to show for the current slide. Slide 0
-	// is the welcome screen (id = undefined -> 'idle'); slides 1..n map by their
-	// manifest id via SLIDE_SCENE. Runs client-side only, once per slide change.
+	// Tell the voters' phones which scene to show for the current slide. Each slide
+	// maps to its manifest id via SLIDE_SCENE. Runs client-side only, once per slide
+	// change.
 	$effect(() => {
-		// Slide 0 is the pre-show vote screen; publish its id so phones switch to the
-		// setpiece-icon vote. Slides 1..n map by their manifest id.
-		const slideId = current === 0 ? 'vote-preshow' : (slides[current - 1]?.id ?? null);
+		// Publish the current slide's manifest id so phones switch to its scene.
+		const slideId = slides[current - 1]?.id ?? null;
+		// Hold off until the initial restore has read the saved slide, so we don't
+		// overwrite it with the reset value on load.
+		if (!restored) return;
 		const state = 'none';
 		fetch('/api/state', {
 			method: 'POST',
@@ -137,19 +163,7 @@
 	onclick={onClick}
 >
 	<div class="stage">
-		{#if current === -1}
-			<!--use final slide for introduction -->
-
-			<img
-				id="title-final"
-				class="slide-img"
-				src="https://island-dating-show.s3.amazonaws.com/slides/slide-122.webp"
-				width="1440"
-				height="809"
-				alt={'title-final' ?? `Slide ${current}`}
-				draggable="false"
-			/>
-		{:else if current === 0}
+		{#if slide.id === 'pre-show-vote'}
 			<Prevote />
 		{:else if slide.id === 'video-timer'}
 			<Countdown value={5} />

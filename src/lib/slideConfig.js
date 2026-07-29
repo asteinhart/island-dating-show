@@ -86,13 +86,13 @@ export const SLIDE_CONFIG = {
 	// Pre-show holding screen (deck slide 0). Voters pick their favourite setpiece
 	// prop from their phones; the deck's <Prevote> screen shows the live tally.
 	// `characters` are the option labels the phone submits (also the tally keys).
-	'vote-preshow': {
+	'pre-show-vote': {
 		vote: {
 			type: 'single',
 			characters: ['Musical Unicorn', 'Disco Jellyfish', 'Drunk Flamingo']
 		},
 		mobile: {
-			id: 'vote-preshow',
+			id: 'pre-show-vote',
 			title: 'Setpiece Icon',
 			text: 'VOTE NOW for your favorite setpiece icon!'
 		}
