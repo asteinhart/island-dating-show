@@ -39,7 +39,7 @@
 	// deck; its <Results> component reveals the right member image from the vote.
 	const slides = allSlides.filter((s) => !isCollapsedGroupMember(s.id));
 
-	let current = $state(1);
+	let current = $state(null);
 	$inspect('current', current);
 
 	// On (re)load, resume from the slide saved in the database instead of resetting
@@ -104,8 +104,7 @@
 			case 'f':
 				toggleFullscreen();
 				break;
-			case 'r':
-			case 'R':
+			case '1':
 				e.preventDefault();
 				current = 1;
 				break;
@@ -163,7 +162,9 @@
 	onclick={onClick}
 >
 	<div class="stage">
-		{#if slide.id === 'pre-show-vote'}
+		{#if !current}
+			<div class="loading"></div>
+		{:else if slide.id === 'pre-show-vote'}
 			<Prevote />
 		{:else if slide.id === 'video-timer'}
 			<Countdown value={5} />
@@ -240,7 +241,7 @@
 		container-type: size;
 	}
 
-	.welcome {
+	.loading {
 		width: 100%;
 		height: 100%;
 		display: flex;

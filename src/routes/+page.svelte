@@ -3,7 +3,7 @@
 		<img
 			id="title-final"
 			class="slide-img"
-			src="https://island-dating-show.s3.amazonaws.com/slides/slide-122.webp"
+			src="https://island-dating-show.s3.amazonaws.com/slides/slide-001.webp"
 			width="1440"
 			height="809"
 			alt={'title-final' ?? `Slide ${current}`}

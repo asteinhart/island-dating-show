@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { toPng } from 'html-to-image';
+	import { toCanvas } from 'html-to-image';
+	import selfieBgr from '$lib/assets/selfie.webp';
 
 	const STORAGE_KEY = 'selfie-photo';
 	const MAX_DIM = 1080; // downscale so the data URL stays well under the localStorage quota
@@ -10,6 +11,7 @@
 	let sharing = $state(false);
 	let fileInput;
 	let cardEl; // the element we rasterize for sharing
+	let selfieCanvas; // the resized selfie, uploaded to S3 on share
 
 	onMount(() => {
 		const saved = localStorage.getItem(STORAGE_KEY);
@@ -28,9 +30,12 @@
 		if (!file) return;
 
 		try {
-			const dataUrl = await resizeToDataUrl(file, MAX_DIM);
+			const canvas = await resizeToCanvas(file, MAX_DIM);
+			selfieCanvas = canvas; // held for upload when the user taps Share
+			const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
 			imgSrc = dataUrl;
 			hasPhoto = true;
+
 			try {
 				localStorage.setItem(STORAGE_KEY, dataUrl);
 			} catch (e) {
@@ -45,8 +50,9 @@
 		}
 	}
 
-	// Draw the image onto a canvas at a capped size and export a compressed JPEG data URL.
-	function resizeToDataUrl(file, maxDim) {
+	// Draw the image onto a canvas at a capped size. The caller derives whatever it
+	// needs from the canvas — a JPEG data URL for display, a WebP blob for upload.
+	function resizeToCanvas(file, maxDim) {
 		return new Promise((resolve, reject) => {
 			const url = URL.createObjectURL(file);
 			const img = new Image();
@@ -62,7 +68,7 @@
 				const ctx = canvas.getContext('2d');
 				ctx.drawImage(img, 0, 0, w, h);
 
-				resolve(canvas.toDataURL('image/jpeg', 0.85));
+				resolve(canvas);
 			};
 			img.onerror = (e) => {
 				URL.revokeObjectURL(url);
@@ -72,32 +78,70 @@
 		});
 	}
 
-	// Render the card to a PNG and hand it to the native share sheet (mobile),
-	// falling back to a download elsewhere. The share UI is tagged
-	// `data-capture-ignore` so it never appears in the exported image — that's
-	// how the on-screen prompt stays out of the shared picture.
+	// canvas.toBlob is callback-based — promisify it for a given type/quality.
+	function canvasToBlob(canvas, type, quality) {
+		return new Promise((resolve, reject) => {
+			canvas.toBlob((b) => (b ? resolve(b) : reject(new Error(`toBlob failed for ${type}`))), type, quality);
+		});
+	}
+
+	// Ask the server for a presigned PUT URL, then upload the bytes straight to
+	// S3. Fire-and-forget: failures here must never block or break sharing.
+	async function uploadToS3(blob, contentType) {
+		try {
+			const res = await fetch('/api/upload-selfie', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ contentType })
+			});
+			if (!res.ok) throw new Error(`presign failed: ${res.status}`);
+			const { url } = await res.json();
+
+			const put = await fetch(url, {
+				method: 'PUT',
+				headers: { 'content-type': contentType },
+				body: blob
+			});
+			if (!put.ok) throw new Error(`upload failed: ${put.status}`);
+		} catch (e) {
+			console.warn('Could not upload selfie to S3', e);
+		}
+	}
+
+	// Render the card once to a canvas and derive a PNG from it for the native share
+	// sheet / download (mobile). The share UI is tagged `data-capture-ignore` so it
+	// never appears in the export — that's how the on-screen prompt stays out.
+	// Separately, the raw selfie (the image taken) is uploaded to S3 in the background.
 	async function share() {
 		if (!cardEl || sharing) return;
 		sharing = true;
 		try {
+			// Upload just the selfie (the image taken) to S3 in the background —
+			// fire-and-forget so it never blocks or breaks sharing.
+			if (selfieCanvas) {
+				canvasToBlob(selfieCanvas, 'image/webp', 0.9)
+					.then((webp) => uploadToS3(webp, 'image/webp'))
+					.catch((e) => console.warn('Could not encode selfie as WebP', e));
+			}
+
 			// Make sure the web fonts are loaded before we rasterize the text.
 			await document.fonts?.ready;
 
-			const dataUrl = await toPng(cardEl, {
+			const canvas = await toCanvas(cardEl, {
 				pixelRatio: 2,
 				cacheBust: true,
 				filter: (node) => !(node instanceof Element && node.hasAttribute('data-capture-ignore'))
 			});
 
-			const blob = await (await fetch(dataUrl)).blob();
-			const file = new File([blob], 'island-dating-show.png', { type: 'image/png' });
+			const pngBlob = await canvasToBlob(canvas, 'image/png');
+			const file = new File([pngBlob], 'island-dating-show.png', { type: 'image/png' });
 
 			if (navigator.canShare?.({ files: [file] })) {
 				await navigator.share({ files: [file], title: 'Island Dating Show' });
 			} else {
 				// Desktop / browsers without file-share: just download the image.
 				const a = document.createElement('a');
-				a.href = dataUrl;
+				a.href = canvas.toDataURL('image/png');
 				a.download = 'island-dating-show.png';
 				a.click();
 			}
@@ -110,7 +154,11 @@
 	}
 </script>
 
-<div class="container" bind:this={cardEl}>
+<div
+	class="container"
+	bind:this={cardEl}
+	style="background-image: url('{selfieBgr}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+>
 	<!-- Heart clip path. Kept INSIDE the card so html-to-image clones it and the
 	     url(#heart) reference still resolves in the exported PNG. objectBoundingBox
 	     units (0–1) make it scale to whatever element it clips. -->
@@ -149,7 +197,7 @@
 		<!-- Excluded from the shared image via the toPng filter above. -->
 		<div class="share-ui" data-capture-ignore>
 			<button type="button" class="share-btn poppins-bold" onclick={share} disabled={sharing}>
-				{sharing ? 'Preparing…' : '📸 Click to share!'}
+				{sharing ? 'Preparing…' : '📸 Share!'}
 			</button>
 		</div>
 	{/if}
@@ -161,22 +209,23 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		height: 100%;
+		min-height: 100dvh;
 		width: 100%;
 		color: #fff;
 		font-family: 'Arial', sans-serif;
 		text-align: center;
-		/* Self-contained background so the exported/shared PNG isn't transparent. */
-		background: linear-gradient(#ff40b5, #ffde59);
+		padding: 0;
 	}
 
 	.share-ui {
-		margin-top: 1.5rem;
+		position: absolute;
+		bottom: 2rem;
+		margin: 0 auto;
 	}
 
 	.share-btn {
-		padding: 0.9rem 1.8rem;
-		font-size: 1.6rem;
+		padding: 0.5rem 1rem;
+		font-size: 1.2rem;
 		color: var(--color-pink);
 		background: #fff;
 		border: none;
@@ -241,7 +290,7 @@
 
 	.prompt {
 		padding: 0 10%;
-		margin-bottom: 20%;
+		margin-bottom: 15;
 		font-size: 3rem;
 		color: var(--color-pink);
 	}

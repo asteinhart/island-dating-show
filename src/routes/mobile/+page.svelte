@@ -42,7 +42,7 @@
 	});
 </script>
 
-<main>
+<main class:flush={cfg?.mobile?.id === 'vote-intermission'}>
 	{#if !ready}
 		<div></div>
 	{:else if cfg?.vote}
@@ -109,6 +109,12 @@
 		font-family: system-ui, sans-serif;
 		background: linear-gradient(#ff40b5, #ffde59);
 		color: white;
+	}
+
+	/* Let the Selfie card fill the whole screen, edge to edge. */
+	main.flush {
+		padding: 0;
+		gap: 0;
 	}
 
 	h1,
