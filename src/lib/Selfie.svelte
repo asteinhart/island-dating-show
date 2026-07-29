@@ -51,7 +51,7 @@
 	}
 
 	// Draw the image onto a canvas at a capped size. The caller derives whatever it
-	// needs from the canvas — a JPEG data URL for display, a WebP blob for upload.
+	// needs from the canvas — a JPEG data URL for display, a JPEG blob for upload.
 	function resizeToCanvas(file, maxDim) {
 		return new Promise((resolve, reject) => {
 			const url = URL.createObjectURL(file);
@@ -81,7 +81,11 @@
 	// canvas.toBlob is callback-based — promisify it for a given type/quality.
 	function canvasToBlob(canvas, type, quality) {
 		return new Promise((resolve, reject) => {
-			canvas.toBlob((b) => (b ? resolve(b) : reject(new Error(`toBlob failed for ${type}`))), type, quality);
+			canvas.toBlob(
+				(b) => (b ? resolve(b) : reject(new Error(`toBlob failed for ${type}`))),
+				type,
+				quality
+			);
 		});
 	}
 
@@ -117,11 +121,13 @@
 		sharing = true;
 		try {
 			// Upload just the selfie (the image taken) to S3 in the background —
-			// fire-and-forget so it never blocks or breaks sharing.
+			// fire-and-forget so it never blocks or breaks sharing. Encode as JPEG:
+			// iOS Safari can't encode WebP from a canvas (toBlob returns null / falls
+			// back to PNG), so a WebP upload silently fails on iPhone.
 			if (selfieCanvas) {
-				canvasToBlob(selfieCanvas, 'image/webp', 0.9)
-					.then((webp) => uploadToS3(webp, 'image/webp'))
-					.catch((e) => console.warn('Could not encode selfie as WebP', e));
+				canvasToBlob(selfieCanvas, 'image/jpeg', 0.9)
+					.then((jpg) => uploadToS3(jpg, 'image/jpeg'))
+					.catch((e) => console.warn('Could not encode selfie', e));
 			}
 
 			// Make sure the web fonts are loaded before we rasterize the text.
@@ -310,5 +316,6 @@
 		font-size: 2.7rem;
 		margin: 1rem 0;
 		line-height: 1.2;
+		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
 	}
 </style>
