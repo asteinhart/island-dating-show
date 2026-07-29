@@ -4,6 +4,19 @@ import { env } from '$env/dynamic/private';
 // Bucket holding the shared selfies. Overridable, defaults to the show bucket.
 export const S3_BUCKET = env.S3_UPLOAD_BUCKET || env.S3_BUCKET || 'island-dating-show';
 
+// Region the bucket lives in — used to build public object URLs.
+const S3_REGION = env.S3_UPLOAD_REGION || env.AWS_REGION;
+
+// Public HTTPS URL for a bucket object. Objects under int-imgs/ are world-readable,
+// so this URL loads straight in the browser (no presigning needed). Uses the
+// region-scoped virtual-hosted endpoint when the region is known.
+export function publicUrl(key) {
+	const host = S3_REGION
+		? `${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`
+		: `${S3_BUCKET}.s3.amazonaws.com`;
+	return `https://${host}/${key}`;
+}
+
 let client;
 
 // Build the S3 client lazily so a missing config only fails an actual upload

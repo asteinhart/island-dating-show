@@ -13,6 +13,7 @@
 	import Prevote from '$lib/Prevote.svelte';
 	import Countdown from '$lib/Countdown.svelte';
 	import Selfie from '$lib/Selfie.svelte';
+	import Composite from '$lib/Composite.svelte';
 
 	// Index the resolved URLs by filename so we can look them up from the manifest.
 	const urlByName = {};
@@ -154,6 +155,7 @@
 
 <svelte:window onkeydown={onKey} />
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="deck"
 	role="button"
@@ -168,6 +170,10 @@
 			<Prevote />
 		{:else if slide.id === 'video-timer'}
 			<Countdown value={5} />
+		{:else if slide.id === 'title-final'}
+			<!-- Final slide: the title card as a backdrop, with every character and
+			     each audience selfie (today's int-imgs/ uploads) scattered as hearts. -->
+			<Composite bg={slide.src} />
 		{:else if group}
 			<!-- Outcome reveal: poll the vote, then reveal the chosen couple's pre-made
 			     image, or play their pre-made clip and advance when it ends. Checked
@@ -273,13 +279,5 @@
 		padding: 0.25rem 0.6rem;
 		border-radius: 999px;
 		pointer-events: none;
-	}
-
-	.hint {
-		font-size: 1rem;
-		max-width: 40ch;
-		margin-top: 2rem;
-		font-family: system-ui, sans-serif;
-		opacity: 0.85;
 	}
 </style>
