@@ -127,11 +127,21 @@
 			// Make sure the web fonts are loaded before we rasterize the text.
 			await document.fonts?.ready;
 
-			const canvas = await toCanvas(cardEl, {
+			const options = {
 				pixelRatio: 2,
-				cacheBust: true,
+				// No cacheBust: reusing the same URLs lets the browser cache the
+				// background between warm-up passes so it's ready for the final one.
 				filter: (node) => !(node instanceof Element && node.hasAttribute('data-capture-ignore'))
-			});
+			};
+
+			// iOS Safari drops images on the first pass — the cloned <img> and CSS
+			// background nodes haven't decoded yet, so the card rasterizes with only
+			// its text and shapes. Rendering a few times warms html-to-image's cache
+			// so the final canvas has the photo and background baked in.
+			let canvas;
+			for (let i = 0; i < 3; i++) {
+				canvas = await toCanvas(cardEl, options);
+			}
 
 			const pngBlob = await canvasToBlob(canvas, 'image/png');
 			const file = new File([pngBlob], 'island-dating-show.png', { type: 'image/png' });
