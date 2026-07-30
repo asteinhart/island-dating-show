@@ -5,14 +5,22 @@
 	// we scatter the hearts over.
 	let { bg = '' } = $props();
 
-	// Every character portrait, bundled at build time -> array of resolved URLs.
-	const characterUrls = Object.values(
+	// The three themed props are decorative — they need the drawn heart frame like the
+	// selfies, unlike the cast portraits which already have a border baked in.
+	const PROP_FILES = ['Disco Jellyfish', 'Drunk Flamingo', 'Musical Unicorn'];
+
+	// Every bundled portrait/prop, resolved to URLs at build time and tagged so props get
+	// the drawn frame while cast portraits keep their baked-in border.
+	const bundled = Object.entries(
 		import.meta.glob('./assets/characters/*.webp', {
 			eager: true,
 			query: '?url',
 			import: 'default'
 		})
-	);
+	).map(([path, src]) => ({
+		src,
+		isCharacter: !PROP_FILES.some((name) => path.includes(name))
+	}));
 
 	// Each heart carries its own random placement, computed once when it's added,
 	// so the characters don't jump around when the selfies finish loading.
@@ -76,7 +84,7 @@
 	// Hearts start large and shrink toward HEART_MIN as tries fail, so a crowded wall
 	// (14 characters + up to ~25 selfies) still packs in. Returns null — image skipped —
 	// only if even the floor size can't find a gap.
-	function place(src, placed) {
+	function place(item, placed) {
 		for (let i = 0; i < ATTEMPTS; i++) {
 			const cap = HEART_MAX - (HEART_MAX - HEART_MIN) * (i / ATTEMPTS);
 			const size = rand(Math.max(HEART_MIN, cap - 3), cap);
@@ -87,7 +95,15 @@
 			const c = circleOf(left, top, size);
 			if (hitsText(c) || hitsHeart(c, placed)) continue;
 			placed.push(c);
-			return { src, left, top, size, rot: rand(-22, 22), z: Math.floor(rand(1, 100)) };
+			return {
+				src: item.src,
+				isCharacter: item.isCharacter,
+				left,
+				top,
+				size,
+				rot: rand(-22, 22),
+				z: Math.floor(rand(1, 100))
+			};
 		}
 		return null;
 	}
@@ -101,15 +117,19 @@
 		// so the wall always stands.
 		let selfieUrls = [];
 		try {
+			console.log('Fetching selfie list...');
 			const res = await fetch('/api/list-selfies', { signal: AbortSignal.timeout(5000) });
+			console.log(res.ok);
 			if (res.ok) ({ images: selfieUrls } = await res.json());
+			console.log(selfieUrls);
 		} catch {
 			// No list — characters still fill the wall.
 		}
 
-		// Shuffle so characters and selfies intermix (placement order drives size, so an
-		// unshuffled list would make every character big and every selfie a small filler).
-		const all = [...characterUrls, ...selfieUrls];
+		// Shuffle so everything intermixes (placement order drives size, so an unshuffled
+		// list would make every portrait big and every selfie a small filler). Selfies get
+		// the drawn heart frame, same as the props.
+		const all = [...bundled, ...selfieUrls.map((src) => ({ src, isCharacter: false }))];
 		for (let i = all.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
 			[all[i], all[j]] = [all[j], all[i]];
@@ -117,7 +137,7 @@
 
 		// Circles already claimed, so nothing placed later lands on them.
 		const placed = [];
-		const laid = all.map((src) => place(src, placed)).filter(Boolean);
+		const laid = all.map((item) => place(item, placed)).filter(Boolean);
 
 		// Reveal one at a time in this (already shuffled) order, so hearts fade in one by
 		// one in random spots on the stage rather than all appearing together.
@@ -140,6 +160,7 @@
 	{#each hearts as h (h.src)}
 		<div
 			class="heart"
+			class:character={h.isCharacter}
 			style="left:{h.left}cqw; top:{h.top}cqh; width:{h.size}cqw; --rot:{h.rot}deg; z-index:{h.z}; animation-delay:{h.delay}ms;"
 		>
 			<div class="heart-inner">
@@ -200,6 +221,19 @@
 			animation: none;
 			opacity: 1;
 		}
+	}
+
+	/* Character portraits already have a heart border baked into the asset, so drop the
+	   drawn white frame + heart clip and let the image fill the box as-is. */
+	.heart.character {
+		background: none;
+		clip-path: none;
+	}
+
+	.heart.character .heart-inner {
+		width: 100%;
+		height: 100%;
+		clip-path: none;
 	}
 
 	.heart-inner {

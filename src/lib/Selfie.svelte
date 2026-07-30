@@ -107,6 +107,7 @@
 				body: blob
 			});
 			if (!put.ok) throw new Error(`upload failed: ${put.status}`);
+			console.log('Selfie uploaded to S3', { contentType, bytes: blob.size });
 		} catch (e) {
 			console.warn('Could not upload selfie to S3', e);
 		}

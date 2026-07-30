@@ -34,6 +34,15 @@ export function getS3() {
 		);
 	}
 
-	client ??= new S3Client({ region, credentials: { accessKeyId, secretAccessKey } });
+	// requestChecksumCalculation: 'WHEN_REQUIRED' stops the SDK (v3.729+) from
+	// baking a default CRC32 checksum into the presigned PUT URL. Otherwise it
+	// signs x-amz-checksum-crc32 for an empty body; the browser's PUT can't send
+	// a matching header, so S3 rejects it and the browser reports a CORS/access
+	// control failure.
+	client ??= new S3Client({
+		region,
+		credentials: { accessKeyId, secretAccessKey },
+		requestChecksumCalculation: 'WHEN_REQUIRED'
+	});
 	return client;
 }
