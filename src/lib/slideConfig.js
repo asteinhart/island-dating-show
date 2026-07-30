@@ -69,6 +69,15 @@ const ISLAND_DATERS = [
 // Binary "type to a T" prompt reused per couple.
 const TYPE_OPTIONS = ["Each Other's Type to a T!", 'Major Typo!'];
 
+// Ranking spec shared by the compatibility reveals: score each couple by how many
+// "Each Other's Type to a T!" votes it drew in its OWN per-couple binary poll
+// (type-cc / type-ha / type-mt / type-pr) — i.e. tally across all four polls, not
+// one. Used by both results-most-compatible (rank the couples) and the first-loser
+// video group (reveal the couple with the fewest such votes).
+const COMPATIBILITY_RANK_BY = Object.fromEntries(
+	COUPLES.map((c) => [c.name, { voteId: `type-${c.key}`, choice: TYPE_OPTIONS[0] }])
+);
+
 // How the favourite-dater vote reveal is rigged, applied to every result beat in
 // the sequence so the per-place reveals shift with it. Per the script: the
 // Nameless Onscreen Woman is always first, and Alfie never places in the top three.
@@ -148,9 +157,7 @@ export const SLIDE_CONFIG = {
 			type: 'full',
 			characters: COUPLE_NAMES,
 			text: 'The Most Compatible Island Daters!', // TODO: score-screen copy shown to the right of the ranking
-			rankBy: Object.fromEntries(
-				COUPLES.map((c) => [c.name, { voteId: `type-${c.key}`, choice: TYPE_OPTIONS[0] }])
-			)
+			rankBy: COMPATIBILITY_RANK_BY
 		}
 	},
 
@@ -371,6 +378,10 @@ export function voteOptionsForSlide(slideId) {
 //
 //   voteId     — the poll to tally (the `vote_id` in the votes table). Its tallied
 //                `choice` strings must be the keys of `choiceToId`.
+//   rankBy     — alternative to voteId when the outcome is decided across SEVERAL
+//                polls: { choice: { voteId, choice } } scores each choiceToId key by
+//                the count of one specific `choice` in its own poll (mirrors
+//                Results' rankBy — e.g. the four type-* binaries deciding the loser).
 //   primaryId  — the one member kept in the deck (drives navigation + the mobile
 //                "Thanks" screen, so it must be a member that has a `mobile` role)
 //   choiceToId — map each possible `choice` string (exactly as the phone submits
@@ -409,11 +420,14 @@ export const RESULTS_GROUPS = {
 	// ranking) gets their pre-recorded confessional played back — one clip per
 	// couple, collapsed to a single deck slide.
 	'first-loser': {
-		voteId: 'results-most-compatible', // TODO: point at the poll whose tally ranks the couples
+		// Tallied the SAME way as results-most-compatible: score each couple by its
+		// "Each Other's Type to a T!" count across the four type-* polls, then reveal
+		// the loser (fewest such votes).
+		rankBy: COMPATIBILITY_RANK_BY,
 		primaryId: 'video-first-loser-cc',
 		kind: 'video',
 		select: 'loser',
-		fallback: 'video-first-loser-cc', // until that tally exists, play this take
+		fallback: 'video-first-loser-cc', // no type-* votes yet -> play this take instead of stranding
 		choiceToId: Object.fromEntries(COUPLES.map((c) => [c.name, `video-first-loser-${c.key}`]))
 	},
 	// The winning couple of Challenge 2 (Slide 66) gets their confessional played

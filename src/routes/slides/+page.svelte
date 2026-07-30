@@ -131,14 +131,14 @@
 		const slideId = slides[current - 1]?.id ?? null;
 		// Hold off until the initial restore has read the saved slide, so we don't
 		// overwrite it with the reset value on load.
-		if (!restored) return;
-		const state = 'none';
-		fetch('/api/state', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ state, slideId })
-		}).catch(() => {}); // a dropped sync just means voters update on the next change
-		//console.log(`Slide ${current} (${slideId ?? 'welcome'}) -> scene "${state}"`); // eslint-disable-line no-console
+		// if (!restored) return;
+		// const state = 'none';
+		// fetch('/api/state', {
+		// 	method: 'POST',
+		// 	headers: { 'content-type': 'application/json' },
+		// 	body: JSON.stringify({ state, slideId })
+		// }).catch(() => {}); // a dropped sync just means voters update on the next change
+		// //console.log(`Slide ${current} (${slideId ?? 'welcome'}) -> scene "${state}"`); // eslint-disable-line no-console
 	});
 
 	// Preload the neighbouring PDF slide so advancing feels instant.
@@ -182,7 +182,8 @@
 			{#key slide.id}
 				{#if group.kind === 'video'}
 					<Outcome
-						voteId={group.voteId}
+						voteId={group.voteId ?? null}
+						rankBy={group.rankBy ?? null}
 						choiceToId={group.choiceToId}
 						srcById={videoSrcById}
 						kind="video"
@@ -192,7 +193,8 @@
 					/>
 				{:else}
 					<Outcome
-						voteId={group.voteId}
+						voteId={group.voteId ?? null}
+						rankBy={group.rankBy ?? null}
 						choiceToId={group.choiceToId}
 						{srcById}
 						select={group.select ?? 'winner'}

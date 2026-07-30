@@ -6,9 +6,9 @@
 	// Pre-show holding screen for the deck (slide 0). LEFT: the three setpiece
 	// props, each a thumbnail + its live vote bar, re-ranked as votes land. RIGHT:
 	// the "vote now" call-to-action and a QR code. Voters submit from their phones
-	// (see the 'vote-preshow' entry in slideConfig), and this screen polls the same
-	// poll — GET /api/votes?vote_id=vote-preshow — the same way <Results> does.
-	let { voteId = 'vote-preshow', date = todayYYYYMMDD(), pollMs = 2000 } = $props();
+	// (see the 'pre-show-vote' entry in slideConfig), and this screen polls the same
+	// poll — GET /api/votes?vote_id=pre-show-vote — the same way <Results> does.
+	let { voteId = 'pre-show-vote', date = todayYYYYMMDD(), pollMs = 2000 } = $props();
 
 	// The three setpiece props. Colours are placeholders until real photos are
 	// supplied — drop an <img> into `.thumb` and remove the background. Each prop's
@@ -41,6 +41,8 @@
 
 	let tally = $state({}); // { propName: count }
 	let total = $state(0);
+
+	$inspect(tally, 'tally');
 
 	// Today's date as YYYYMMDD (local time) — matches how votes are keyed.
 	function todayYYYYMMDD() {
