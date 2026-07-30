@@ -224,7 +224,7 @@
 		{/if}
 	</div>
 
-	<div class="counter">{current} / {total} {slideId}</div>
+	<!-- <div class="counter">{current} / {total} {slideId}</div> -->
 </div>
 
 <style>
