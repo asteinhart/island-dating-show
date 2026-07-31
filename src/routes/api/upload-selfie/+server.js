@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { getS3, S3_BUCKET } from '$lib/server/s3';
+import { getS3, S3_BUCKET, dateStamp } from '$lib/server/s3';
 
 // Map the accepted upload content types to a file extension. The browser signs
 // and PUTs with the exact same Content-Type, so keep this list tight.
@@ -12,7 +12,6 @@ const EXT_BY_TYPE = {
 };
 
 const PREFIX = 'int-imgs/';
-const DATE = new Date().toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
 const URL_TTL = 300; // seconds the presigned PUT URL stays valid
 
 // POST /api/upload-selfie  { contentType? }
@@ -32,7 +31,9 @@ export async function POST({ request }) {
 		throw error(400, `Unsupported contentType: ${contentType}`);
 	}
 
-	const key = `${PREFIX}${DATE}_${crypto.randomUUID()}.${ext}`;
+	// Stamp per-request (not at module load) so a long-running server can't keep using a
+	// stale date after the day rolls over. Must match list-selfies' prefix exactly.
+	const key = `${PREFIX}${dateStamp()}_${crypto.randomUUID()}.${ext}`;
 
 	const url = await getSignedUrl(
 		getS3(),

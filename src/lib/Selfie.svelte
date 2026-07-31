@@ -12,6 +12,7 @@
 	let fileInput;
 	let cardEl; // the element we rasterize for sharing
 	let selfieCanvas; // the resized selfie, uploaded to S3 on share
+	let selfieUploaded = false; // guard: upload each distinct selfie to S3 only once
 
 	onMount(() => {
 		const saved = localStorage.getItem(STORAGE_KEY);
@@ -32,6 +33,7 @@
 		try {
 			const canvas = await resizeToCanvas(file, MAX_DIM);
 			selfieCanvas = canvas; // held for upload when the user taps Share
+			selfieUploaded = false; // a fresh photo hasn't been uploaded yet
 			const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
 			imgSrc = dataUrl;
 			hasPhoto = true;
@@ -108,8 +110,10 @@
 			});
 			if (!put.ok) throw new Error(`upload failed: ${put.status}`);
 			console.log('Selfie uploaded to S3', { contentType, bytes: blob.size });
+			return true;
 		} catch (e) {
 			console.warn('Could not upload selfie to S3', e);
+			return false;
 		}
 	}
 
@@ -125,10 +129,21 @@
 			// fire-and-forget so it never blocks or breaks sharing. Encode as JPEG:
 			// iOS Safari can't encode WebP from a canvas (toBlob returns null / falls
 			// back to PNG), so a WebP upload silently fails on iPhone.
-			if (selfieCanvas) {
+			// Guarded so tapping Share again on the same photo doesn't upload a second
+			// copy — otherwise the same selfie shows up twice on the wall. Mark it up
+			// front so rapid double-taps can't race, and clear it if the upload fails so
+			// a genuine failure can still retry on the next tap.
+			if (selfieCanvas && !selfieUploaded) {
+				selfieUploaded = true;
 				canvasToBlob(selfieCanvas, 'image/jpeg', 0.9)
 					.then((jpg) => uploadToS3(jpg, 'image/jpeg'))
-					.catch((e) => console.warn('Could not encode selfie', e));
+					.then((ok) => {
+						if (!ok) selfieUploaded = false;
+					})
+					.catch((e) => {
+						selfieUploaded = false;
+						console.warn('Could not encode selfie', e);
+					});
 			}
 
 			// Make sure the web fonts are loaded before we rasterize the text.

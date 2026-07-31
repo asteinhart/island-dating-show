@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
-import { getS3, S3_BUCKET, publicUrl } from '$lib/server/s3';
+import { getS3, S3_BUCKET, publicUrl, dateStamp } from '$lib/server/s3';
 
 // Selfies are uploaded under this prefix as `YYYYMMDD_<uuid>.<ext>` (see
 // /api/upload-selfie). The final deck slide only wants TODAY's uploads, so we
@@ -8,17 +8,14 @@ import { getS3, S3_BUCKET, publicUrl } from '$lib/server/s3';
 const PREFIX = 'int-imgs/';
 const IMG = /\.(webp|jpe?g|png)$/i;
 
-// YYYYMMDD for the current day, matching the upload endpoint's key stamp.
-function today() {
-	return new Date().toISOString().slice(0, 10).replace(/-/g, '');
-}
-
 // GET /api/list-selfies -> { images: [url, ...] }
 // Lists the audience selfies uploaded today and returns their public URLs.
 // Requires the S3 credentials to allow s3:ListBucket on the bucket.
 export async function GET() {
 	const s3 = getS3();
-	const prefix = `${PREFIX}${today()}`;
+	// Same shared, timezone-pinned stamp the upload endpoint keys with, so this only
+	// ever lists objects whose key starts with today's YYYYMMDD.
+	const prefix = `${PREFIX}${dateStamp()}`;
 
 	const urls = [];
 	let ContinuationToken;

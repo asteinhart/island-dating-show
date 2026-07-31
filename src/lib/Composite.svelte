@@ -28,6 +28,15 @@
 
 	const rand = (min, max) => min + Math.random() * (max - min);
 
+	// Fisher–Yates in place; returns the same array so it can be chained.
+	const shuffle = (a) => {
+		for (let i = a.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[a[i], a[j]] = [a[j], a[i]];
+		}
+		return a;
+	};
+
 	// The stage is a fixed 16:9 box (matches .stage in the deck). Overlap math runs in
 	// these pixel units because a heart's `left`/`size` are %-of-width (cqw) while its
 	// `top` is %-of-height (cqh) — different scales that only reconcile in pixels.
@@ -36,12 +45,14 @@
 
 	// Keep the scatter clear of the centred title ("island dating show" + subtitle).
 	// Box is in stage %: left, top, width, height.
-	const TEXT_ZONE = { left: 10, top: 44, width: 80, height: 27 };
+	const TEXT_ZONE = { left: 10, top: 44, width: 80, height: 21 };
 
-	const HEART_MAX = 15; // biggest heart, in cqw (% of stage width)
-	const HEART_MIN = 6; // floor once the wall gets crowded
-	const PAD = 1.08; // radius fudge so tilted hearts keep a little air between them
-	const ATTEMPTS = 500; // random tries before we give up on an image
+	const HEART_MAX = 15; // biggest heart, in cqw (% of stage width) — at the reference count
+	const HEART_MIN = 6; // floor once the wall gets crowded — at the reference count
+	const HEART_FLOOR = 4.2; // hearts never shrink below this, however full the wall gets
+	const REF_COUNT = 20; // image count HEART_MAX/HEART_MIN are tuned for; more → smaller hearts
+	const PAD = 0.7; // radius fudge; <1 lets hearts nestle closer so more fit on the wall
+	const ATTEMPTS = 800; // random tries before we give up on an image
 	const REVEAL_STEP = 110; // ms between each heart fading in, one at a time
 
 	// Bounding circle of a heart placement, in stage pixels.
@@ -81,13 +92,14 @@
 		});
 
 	// Find a spot for one image that clears the text and every heart already down.
-	// Hearts start large and shrink toward HEART_MIN as tries fail, so a crowded wall
-	// (14 characters + up to ~25 selfies) still packs in. Returns null — image skipped —
-	// only if even the floor size can't find a gap.
-	function place(item, placed) {
+	// Hearts start at `heartMax` and shrink toward `heartMin` as tries fail, so a crowded
+	// wall still packs in. `heartMax`/`heartMin` are scaled to the total image count by the
+	// caller, so more images just means smaller hearts rather than dropped ones. Returns
+	// null — image skipped — only if even the floor size can't find a gap.
+	function place(item, placed, heartMax, heartMin) {
 		for (let i = 0; i < ATTEMPTS; i++) {
-			const cap = HEART_MAX - (HEART_MAX - HEART_MIN) * (i / ATTEMPTS);
-			const size = rand(Math.max(HEART_MIN, cap - 3), cap);
+			const cap = heartMax - (heartMax - heartMin) * (i / ATTEMPTS);
+			const size = rand(Math.max(heartMin, cap - 3), cap);
 			const wPct = size; // width as % of stage width
 			const hPct = size * (STAGE_W / STAGE_H); // same pixels tall, as % of height
 			const left = rand(0, 100 - wPct);
@@ -108,6 +120,52 @@
 		return null;
 	}
 
+	// Last-resort placement for an image that couldn't find a clear gap: put it at the
+	// floor size in the spot with the *least* overlap, accepting a little overlap so the
+	// image still shows rather than being dropped. Always returns a placement.
+	function forcePlace(item, placed) {
+		const size = HEART_FLOOR;
+		const wPct = size;
+		const hPct = size * (STAGE_W / STAGE_H);
+		let best = null;
+		let bestScore = Infinity;
+		for (let i = 0; i < ATTEMPTS; i++) {
+			const left = rand(0, 100 - wPct);
+			const top = rand(0, 100 - hPct);
+			const c = circleOf(left, top, size);
+			if (hitsText(c)) continue;
+			// Sum how deeply this spot overlaps everything already down; keep the least-bad.
+			let score = 0;
+			for (const o of placed) {
+				const dx = c.cx - o.cx;
+				const dy = c.cy - o.cy;
+				const gap = (c.r + o.r) * (c.r + o.r) - (dx * dx + dy * dy);
+				if (gap > 0) score += gap;
+			}
+			if (score < bestScore) {
+				bestScore = score;
+				best = { left, top, c };
+			}
+			if (score === 0) break; // a clear spot turned up after all
+		}
+		// Every candidate hit the title box (should never happen) — just drop it somewhere.
+		if (!best) {
+			const left = rand(0, 100 - wPct);
+			const top = rand(0, 100 - hPct);
+			best = { left, top, c: circleOf(left, top, size) };
+		}
+		placed.push(best.c);
+		return {
+			src: item.src,
+			isCharacter: item.isCharacter,
+			left: best.left,
+			top: best.top,
+			size,
+			rot: rand(-22, 22),
+			z: Math.floor(rand(1, 100))
+		};
+	}
+
 	onMount(async () => {
 		// Audience selfies are listed live from S3 (today's uploads only). Wait for that
 		// list before placing anything so the whole wall — characters + selfies — lays
@@ -126,22 +184,41 @@
 			// No list — characters still fill the wall.
 		}
 
-		// Shuffle so everything intermixes (placement order drives size, so an unshuffled
-		// list would make every portrait big and every selfie a small filler). Selfies get
-		// the drawn heart frame, same as the props.
-		const all = [...bundled, ...selfieUrls.map((src) => ({ src, isCharacter: false }))];
-		for (let i = all.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[all[i], all[j]] = [all[j], all[i]];
-		}
+		// Selfies are the whole point of the wall, so every one gets a spot. Shuffle them
+		// for a varied reveal, then lay them out shrinking the size range as needed. Sizes
+		// scale as 1/sqrt(count) — area (∝ size²) is what shares the stage — and never grow
+		// past the tuned defaults nor below HEART_FLOOR, so selfies stay recognisable.
+		const selfies = shuffle(selfieUrls.map((src) => ({ src, isCharacter: false })));
 
 		// Circles already claimed, so nothing placed later lands on them.
 		const placed = [];
-		const laid = all.map((item) => place(item, placed)).filter(Boolean);
+		let selfieHearts = [];
+		let scale = Math.min(1, Math.sqrt(REF_COUNT / Math.max(selfies.length, 1)));
+		let heartMax = HEART_MAX;
+		let heartMin = HEART_MIN;
+		for (let attempt = 0; attempt < 6; attempt++) {
+			placed.length = 0;
+			heartMax = HEART_MAX * scale;
+			heartMin = Math.max(HEART_FLOOR, HEART_MIN * scale);
+			selfieHearts = selfies.map((s) => place(s, placed, heartMax, heartMin));
+			if (selfieHearts.every(Boolean)) break; // every selfie found a clear gap
+			scale *= 0.85; // some were dropped — shrink the whole wall and re-lay
+		}
+		// Guarantee: any selfie that still couldn't find a clear gap is force-placed with a
+		// little overlap, so a selfie is never dropped from the wall.
+		selfieHearts = selfieHearts.map((h, i) => h ?? forcePlace(selfies[i], placed));
 
-		// Reveal one at a time in this (already shuffled) order, so hearts fade in one by
-		// one in random spots on the stage rather than all appearing together.
-		laid.forEach((h, i) => (h.delay = i * REVEAL_STEP));
+		// Cast portraits + props are just filler for whatever room the selfies left. They
+		// take normal placement into the remaining gaps and are simply skipped if they don't
+		// fit — so a full selfie wall shows few (or no) characters and never drops a selfie.
+		const chars = shuffle([...bundled]);
+		const charHearts = chars.map((c) => place(c, placed, heartMax, heartMin)).filter(Boolean);
+
+		const laid = [...selfieHearts, ...charHearts];
+
+		// Reveal one at a time in a random order, so selfies and characters fade in
+		// intermixed rather than every selfie first.
+		shuffle([...laid]).forEach((h, i) => (h.delay = i * REVEAL_STEP));
 		hearts = laid;
 	});
 </script>

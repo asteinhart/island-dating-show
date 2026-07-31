@@ -17,6 +17,25 @@ export function publicUrl(key) {
 	return `https://${host}/${key}`;
 }
 
+// The show runs on a single local calendar day, so both the upload key stamp and the
+// wall's listing must agree on what "today" is. Pin it to the event's timezone (not
+// UTC): an evening NYC event crosses UTC midnight at 8pm ET, which would otherwise roll
+// the date mid-show and split the wall across two prefixes. Override with SELFIE_TZ.
+const SHOW_TZ = env.SELFIE_TZ || 'America/New_York';
+
+// YYYYMMDD for `date` (default now) in the show timezone. `en-CA` formats as
+// YYYY-MM-DD; drop the dashes to get the key prefix used under int-imgs/.
+export function dateStamp(date = new Date()) {
+	return new Intl.DateTimeFormat('en-CA', {
+		timeZone: SHOW_TZ,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	})
+		.format(date)
+		.replace(/-/g, '');
+}
+
 let client;
 
 // Build the S3 client lazily so a missing config only fails an actual upload
