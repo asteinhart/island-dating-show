@@ -31,6 +31,10 @@
 	//   forceLast     — names pinned to the bottom (inserted if not otherwise present)
 	//   forceOutOfTop — [{ name, n }]: keep `name` out of the top `n` ranks (demote
 	//                   it to rank n+1 if the honest tally would place it higher)
+	//   forcePlace    — [{ name, place }]: pin `name` to an exact 1-based rank,
+	//                   regardless of its tally. A name also in forceFirst/forceLast
+	//                   keeps that top/bottom pin (so results-edited can fix Callum at
+	//                   5th, then pin him last as he drops).
 	let {
 		type = 'full',
 		characters = [],
@@ -41,6 +45,7 @@
 		forceFirst = [],
 		forceLast = [],
 		forceOutOfTop = [],
+		forcePlace = [],
 		animateDrop = null, // name to animate falling to last, one rank at a time
 		date = todayYYYYMMDD(),
 		pollMs = 2000 // keep re-tallying so the ranking tracks late votes
@@ -136,13 +141,26 @@
 	}
 
 	// Apply the scripted overrides in order: pin `forceFirst` to the top and
-	// `forceLast` to the bottom (inserting any name not already ranked), then demote
-	// each `forceOutOfTop` name to just past its cap. The demotion runs on the
-	// assembled list, so a name pinned first counts toward the "top n".
+	// `forceLast` to the bottom (inserting any name not already ranked), then pin each
+	// `forcePlace` name to its exact rank, then finally demote each `forceOutOfTop`
+	// name past its cap. `forceOutOfTop` runs LAST so its range guarantee still holds
+	// after an exact pin shuffles the list (e.g. splicing Callum to 5th mustn't slide
+	// Alfie up into the top three). Each pass runs on the assembled list, so a name
+	// pinned first counts toward the "top n".
 	function applyOverrides(list, fLast = forceLast) {
 		const pinned = new Set([...forceFirst, ...fLast]);
 		const middle = list.filter((c) => !pinned.has(c));
 		const result = [...forceFirst, ...middle, ...fLast];
+		for (const { name, place: p } of forcePlace) {
+			// An explicit top/bottom pin wins over a fixed place, so results-edited's
+			// forceLast keeps Callum last on the final order while the drop's start
+			// order (fLast without Callum) still fixes him at 5th.
+			if (pinned.has(name)) continue;
+			const idx = result.indexOf(name);
+			if (idx === -1) continue;
+			result.splice(idx, 1);
+			result.splice(Math.min(p - 1, result.length), 0, name);
+		}
 		for (const { name, n } of forceOutOfTop) {
 			const idx = result.indexOf(name);
 			if (idx !== -1 && idx < n) {

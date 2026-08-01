@@ -80,10 +80,12 @@ const COMPATIBILITY_RANK_BY = Object.fromEntries(
 
 // How the favourite-dater vote reveal is rigged, applied to every result beat in
 // the sequence so the per-place reveals shift with it. Per the script: the
-// Nameless Onscreen Woman is always first, and Alfie never places in the top three.
+// Nameless Onscreen Woman is always first, Alfie never places in the top three, and
+// Callum is pinned to 5th (he then drops to last in results-edited, see below).
 const FAVORITE_RIG = {
 	forceFirst: ['Woman'],
-	forceOutOfTop: [{ name: 'Alfie', n: 3 }]
+	forceOutOfTop: [{ name: 'Alfie', n: 3 }],
+	forcePlace: [{ name: 'Callum', place: 5 }]
 };
 
 // vote.type    'single' = pick one from `characters`; 'double' = binary two-option choice.
